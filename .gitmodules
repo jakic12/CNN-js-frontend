@@ -1,0 +1,3 @@
+[submodule "CNN-js"]
+	path = CNN-js
+	url = https://github.com/jakic12/CNN-js.git
