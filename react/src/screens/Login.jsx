@@ -31,7 +31,7 @@ class Login extends Component {
       else
         this.props.loginCallback(json.token)
     })
-    .catch(console.error)
+    .catch(this.props.onError)
 
     event.preventDefault();
   }
@@ -39,7 +39,7 @@ class Login extends Component {
   render(){
     return (
       <form onSubmit={this.handleSubmit}>
-        <div className="Login">
+        <div className="Login mainText">
           username:<input id="user" onChange={evt => {this.setState({username: evt.target.value})}}/>
           password:<input id="pass" onChange={evt => {this.setState({password: evt.target.value})}}/>
           <input type="submit" />

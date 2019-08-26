@@ -61,7 +61,7 @@ app.get(`/getNetwork/:netId`, checkAuth, (req, res) => {
         res.send([])
 })
 
-app.get(`/getNetwork`, checkAuth, (req, res) => {
+app.get(`/getNetworks`, checkAuth, (req, res) => {
     if(neural_networks[req.userId])
         res.send(Object.keys(neural_networks[req.userId]))
     else
@@ -71,7 +71,8 @@ app.get(`/getNetwork`, checkAuth, (req, res) => {
 app.post(`/login`, (req, res) => {
     if(req.body.user && req.body.pass){
         let hashPass = sha256(req.body.pass)
-        let authUser = users.reduce((_, u) => u.user === req.body.user && u.pass === hashPass ? u : null)
+        let authUser = users.find((u) => u.user === req.body.user && u.pass === hashPass)
+        console.log(authUser)
         if(authUser)
             res.send({token: jwt.sign({ userId:authUser.userId }, JWTsecret, { expiresIn: `1 week` })})
         else

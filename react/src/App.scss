@@ -2,6 +2,10 @@
     margin:0;
 }
 
+body{
+    background:black;
+}
+
 #main{
     position:relative;
     width:100vw;
@@ -22,8 +26,14 @@
     }
 }
 
+
 .mainText{
     color:white;
+}
+
+.headerText{
+    color:white;
+    font-weight:600;
 }
 
 .highlightedText{
