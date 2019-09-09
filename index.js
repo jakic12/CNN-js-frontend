@@ -35,7 +35,7 @@ const checkAuth = (req, res, next) => {
         const token = req.header('Authorization').replace('Bearer ', '')
         userId = jwt.verify(token, JWTsecret).userId
     } catch(error) {
-        res.status(401).send('Unauthorized')
+        res.status(401).send('{"err":"Unauthorized"}')
         return
     }
 
@@ -59,6 +59,21 @@ app.get(`/getNetwork/:netId`, checkAuth, (req, res) => {
         res.send(neural_networks[req.userId][req.params.netId])
     else
         res.send([])
+})
+
+app.get(`/setParameter/:netId`, checkAuth, (req, res) => {
+    try{
+        if(req.params.netId){
+            if(!neural_networks[req.userId][req.params.netId])
+                throw new Error(`neural network doesnt exist`)
+            
+            neural_networks[req.userId][req.params.netId][req.query.param] = req.query.value
+            res.send({})
+        }else
+            throw new Error("no network id specified")
+    }catch(e){
+        res.send({error:e})
+    }
 })
 
 app.get(`/getNetworks`, checkAuth, (req, res) => {
