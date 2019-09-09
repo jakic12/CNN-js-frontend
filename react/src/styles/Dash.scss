@@ -14,6 +14,14 @@
     box-sizing: border-box;
 
     .head{
+        display:flex;
+        justify-content: space-between;
+        .leftText{
+            
+        }
+        .rightText{
+            cursor:pointer;
+        }
     }
 
     .listOfNetworks{
