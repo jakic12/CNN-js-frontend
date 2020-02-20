@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="height:100vh">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
@@ -10,6 +10,57 @@
       content="Web site created using create-react-app"
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Oxygen&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      html {
+        font-family: "Oxygen", sans-serif;
+      }
+
+      .noscript-top {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100vh;
+        width: 100vw;
+        background: rgb(32, 33, 36);
+      }
+
+      .noscript-wrapper {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        color: white;
+      }
+
+      .noscript-wrapper .noscript-text {
+      }
+
+      .noscript-wrapper .noscript-logo {
+        padding: 2em;
+      }
+
+      .noscript-logo img {
+        width: 5em;
+        height: 5em;
+        animation-name: spin;
+        animation-duration: 8000ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -26,8 +77,19 @@
     -->
     <title>React App</title>
   </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+  <body style="margin:0">
+    <noscript>
+      <div class="noscript-top">
+        <div class="noscript-wrapper">
+          <div class="noscript-text">
+            You need to enable javascript, so react can run
+          </div>
+          <div class="noscript-logo">
+            <img src="%PUBLIC_URL%/logo512.png" alt="react-logo" />
+          </div>
+        </div>
+      </div>
+    </noscript>
     <div id="root"></div>
     <!--
       This HTML file is a template.
