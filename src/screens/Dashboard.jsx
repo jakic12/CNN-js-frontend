@@ -1,3 +1,5 @@
 import React from "react";
 
-export default () => <div>dash</div>;
+import UnderConstruction from "../components/UnderConstruction";
+
+export default () => <UnderConstruction />;

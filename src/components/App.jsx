@@ -43,6 +43,8 @@ const SideAndScreens = styled.div`
 
 const ScreenSwitcher = styled.div`
   flex-grow: 1;
+  height: 100%;
+  overflow: auto;
 `;
 
 function App({ colors }) {
