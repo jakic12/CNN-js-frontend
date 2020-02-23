@@ -9,7 +9,6 @@ const Logo = styled.div`
   flex-direction: row;
   height: 100%;
   align-items: center;
-  justify-content: center;
 `;
 
 const LogoImg = styled.img`

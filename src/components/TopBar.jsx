@@ -15,12 +15,13 @@ const TopBarStyled = styled.div`
 const AboveSidebar = styled.div`
   width: ${props => props.sidebarwidth};
   height: 100%;
+  padding-left: 30px;
 `;
 
 const TopBar = ({ structure, colors }) => (
   <TopBarStyled {...structure}>
     <AboveSidebar {...structure}>
-      <Logo height={structure.topbarheight} />
+      <Logo />
     </AboveSidebar>
   </TopBarStyled>
 );

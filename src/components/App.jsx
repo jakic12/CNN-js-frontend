@@ -15,12 +15,16 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 // redux
 import { connect } from "react-redux";
 
+// resources
+import { MdHome } from "react-icons/md";
+
 const screens = [
   {
     path: `/`,
     fullName: `Dashboard`,
     component: Dashboard,
-    exact: true
+    exact: true,
+    icon: MdHome
   }
 ];
 
