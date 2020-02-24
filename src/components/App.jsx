@@ -8,6 +8,8 @@ import TopBar from "./TopBar";
 
 // screens
 import Dashboard from "../screens/Dashboard";
+import Networks from "../screens/Networks";
+import Network from "../screens/Network";
 
 // router
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
@@ -17,6 +19,7 @@ import { connect } from "react-redux";
 
 // resources
 import { MdHome } from "react-icons/md";
+import { IoMdGitNetwork } from "react-icons/io";
 
 const screens = [
   {
@@ -25,6 +28,19 @@ const screens = [
     component: Dashboard,
     exact: true,
     icon: MdHome
+  },
+  {
+    path: `/networks`,
+    fullName: `Networks`,
+    component: Networks,
+    exact: true,
+    icon: ({ style }) => (
+      <IoMdGitNetwork style={{ transform: `rotate(-90deg)`, ...style }} />
+    )
+  },
+  {
+    path: `/networks/:networkId`,
+    component: Network
   }
 ];
 

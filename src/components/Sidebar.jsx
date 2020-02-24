@@ -12,6 +12,7 @@ const SidebarWrapper = styled.aside`
   width: ${props => props.sidebarwidth};
   border-top-right-radius: 20px;
   background: ${props => props.primarycolor};
+  flex-shrink: 0;
 `;
 
 const SidebarInside = styled.div`
@@ -43,19 +44,21 @@ const Sidebar = ({ colors, screens, structure }) => {
       <SidebarInside>
         {screens.map(screen => {
           const ScreenIcon = screen.icon;
-          return (
-            <SidebarItemLink to={screen.path} {...colors}>
-              <ScreenIcon
-                style={{
-                  paddingRight: `0.5em`,
-                  height: `1.5em`,
-                  width: `1.5em`,
-                  color: colors.primarytextcolor
-                }}
-              />
-              {screen.fullName}
-            </SidebarItemLink>
-          );
+          if (screen.fullName)
+            return (
+              <SidebarItemLink to={screen.path} {...colors}>
+                <div style={{ paddingRight: `0.5em` }}>
+                  <ScreenIcon
+                    style={{
+                      height: `1.5em`,
+                      width: `1.5em`,
+                      color: colors.primarytextcolor
+                    }}
+                  />
+                </div>
+                {screen.fullName}
+              </SidebarItemLink>
+            );
         })}
       </SidebarInside>
     </SidebarWrapper>

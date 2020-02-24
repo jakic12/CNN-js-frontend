@@ -1,0 +1,151 @@
+import React from "react";
+import styled, { css } from "styled-components";
+
+// router
+import { Link } from "react-router-dom";
+
+const CardWrapper = styled(Link)`
+  width: 13em;
+  height: 15em;
+  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12),
+    0 3px 5px -1px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  margin: 0.7em;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  transform: scale(1);
+  transition: transform 0.5s;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  background: gray;
+  text-decoration: none;
+  color: black;
+  display: block;
+`;
+
+const BottomWrapper = styled.div`
+  background: white;
+  height: 30%;
+  width: 100%;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+`;
+
+const NetworkTitle = styled.h2`
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  &:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
+`;
+
+const NetworkImage = styled.img`
+  width: 100%;
+  display: block;
+  flex-grow: 0;
+`;
+
+const NetworkImageDiv = styled.div`
+  height: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+`;
+
+export default ({ network }) => {
+  console.log(network);
+  return (
+    <CardWrapper to={`/networks/` + network.id}>
+      <NetworkImageDiv>
+        <NetworkImage
+          src="https://miro.medium.com/max/2636/1*3fA77_mLNiJTSgZFhYnU0Q.png"
+          alt="neural network icon"
+        />
+      </NetworkImageDiv>
+      <BottomWrapper>
+        <NetworkTitle>{network.name}</NetworkTitle>
+      </BottomWrapper>
+    </CardWrapper>
+  );
+};
+
+const NetworkCardParentWrapper = styled.div`
+  padding: 1em;
+  padding-right: 0;
+  padding-bottom: 0;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  transition: 0.5s padding;
+
+  ${props =>
+    props.small &&
+    css`
+      padding-right: 1em;
+    `}
+`;
+
+const Title = styled.h1`
+  margin: 0.5em;
+  margin-left: 0;
+  margin-right: 0;
+
+  box-shadow: 0;
+  box-sizing: border-box;
+
+  ${props =>
+    props.cardMode &&
+    css`
+      box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
+        0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2);
+      margin: 0;
+      padding: 0.5em;
+      border-radius: 5px;
+    `}
+
+  transition: .5s;
+`;
+
+const NetworkCards = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 1em;
+  padding-right: 0;
+  box-sizing: border-box;
+  height: auto;
+
+  ${CardWrapper}:first-child {
+    margin-left: 0;
+  }
+
+  transition: 0.5s height, 0.5s padding;
+  ${props =>
+    props.small &&
+    css`
+      height: 0;
+      padding: 0;
+    `}
+`;
+
+export const NetworkCardParent = ({ children, title, small }) => (
+  <NetworkCardParentWrapper small={small}>
+    <div>
+      <Title cardMode={small}>{title}</Title>
+    </div>
+    <NetworkCards small={small}>{children}</NetworkCards>
+  </NetworkCardParentWrapper>
+);
