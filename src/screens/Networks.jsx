@@ -6,6 +6,7 @@ import { fetchNetworks } from "../redux/actions/networks";
 
 // components
 import NetworkCard, { NetworkCardParent } from "../components/NetworkCard";
+import ServerLogin from "../components/ServerLogin";
 
 class Networks extends Component {
   constructor(props) {
@@ -15,34 +16,62 @@ class Networks extends Component {
       networkGroupsSmall: false
     };
   }
+
   componentWillMount() {
-    this.props.getNetworks(
-      this.props.config.apiUrl,
-      `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0YWY2NDdjNWQ0Yjc5MGJhN2ExNGIzZDZjOTY2ZTY0ZTM2ZTAyMzRiM2U4YzY0NmZlYzZjZjk5YzdhNmYyNDU5IiwiaWF0IjoxNTgyNTc3MzE1LCJleHAiOjE1ODMxODIxMTV9.EsPP7BQO8R4aKCjwxCN_xspVjqKQ3BR5BwJrRHL7GrA`
-    );
+    this.props.servers.servers.map(server => {
+      this.props.getNetworks(server);
+    });
   }
+  componentWillUpdate() {
+    this.props.servers.servers.map(server => {
+      if (
+        !this.props.networks.networks[server.uniqueName] &&
+        !this.props.networks.isLoading[server.uniqueName] &&
+        !this.props.networks.error[server.uniqueName]
+      )
+        this.props.getNetworks(server);
+    });
+  }
+
   render() {
     return (
       <div>
-        <NetworkCardParent
-          title={`Local`}
-          small={this.state.networkGroupsSmall}
-        >
-          {this.props.networks.networks &&
-            Object.keys(this.props.networks.networks).map(id => {
-              return <NetworkCard network={this.props.networks.networks[id]} />;
-            })}
-        </NetworkCardParent>
-
-        <NetworkCardParent
-          title={`Server1`}
-          small={this.state.networkGroupsSmall}
-        >
-          {this.props.networks.networks &&
-            Object.keys(this.props.networks.networks).map(id => (
-              <NetworkCard network={this.props.networks.networks[id]} />
-            ))}
-        </NetworkCardParent>
+        {this.props.servers.servers.map(server => {
+          return (
+            <NetworkCardParent
+              title={server.uniqueName}
+              small={this.props.networkGroupsSmall}
+              key={`${server.uniqueName}_network_display_group`}
+            >
+              {!this.props.networks.isLoading[server.uniqueName] &&
+                !this.props.networks.error[server.uniqueName] &&
+                this.props.networks.networks[server.uniqueName] &&
+                Object.keys(
+                  this.props.networks.networks[server.uniqueName]
+                ).map(id => {
+                  return (
+                    <NetworkCard
+                      network={
+                        this.props.networks.networks[server.uniqueName][id]
+                      }
+                    />
+                  );
+                })}
+              {this.props.networks.isLoading[server.uniqueName] && (
+                <div>loading</div>
+              )}
+              {this.props.networks.error[server.uniqueName] &&
+                this.props.networks.error[server.uniqueName] !==
+                  `Unauthorized` && (
+                  <div>
+                    error: {this.props.networks.error[server.uniqueName]}
+                  </div>
+                )}
+              {this.props.networks.error[server.uniqueName] ===
+                `Unauthorized` && <ServerLogin server={server} />}
+            </NetworkCardParent>
+          );
+        })}
       </div>
     );
   }
@@ -51,6 +80,6 @@ class Networks extends Component {
 export default connect(
   state => state,
   dispatch => ({
-    getNetworks: (url, apiToken) => fetchNetworks(url, apiToken, dispatch)
+    getNetworks: server => fetchNetworks(server, dispatch)
   })
 )(Networks);

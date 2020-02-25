@@ -1,26 +1,61 @@
 import {
   FETCH_NETWORKS_REQUEST,
   FETCH_NETWORKS_SUCCESS,
-  FETCH_NETWORKS_ERROR
+  FETCH_NETWORKS_ERROR,
+  UNLOAD_NETWORKS
 } from "../actions/networks";
 
 const defaultState = {
-  networks: [],
-  isLoading: false,
-  error: undefined
+  networks: {},
+  isLoading: {},
+  error: {}
 };
 
 export default (state = defaultState, action) => {
   switch (action.type) {
     case FETCH_NETWORKS_REQUEST:
-      return { isLoading: true, error: undefined, networks: state.networks };
+      return {
+        networks: Object.assign({}, state.networks),
+        isLoading: Object.assign({}, state.isLoading, {
+          [action.server.uniqueName]: true
+        }),
+        error: Object.assign({}, state.error, {
+          [action.server.uniqueName]: false
+        })
+      };
     case FETCH_NETWORKS_SUCCESS:
-      return { isLoading: false, error: undefined, networks: action.networks };
+      return {
+        networks: Object.assign({}, state.networks, {
+          [action.server.uniqueName]: action.networks
+        }),
+        isLoading: Object.assign({}, state.isLoading, {
+          [action.server.uniqueName]: false
+        }),
+        error: Object.assign({}, state.error, {
+          [action.server.uniqueName]: false
+        })
+      };
     case FETCH_NETWORKS_ERROR:
       return {
-        isLoading: false,
-        error: action.error,
-        networks: state.networks
+        networks: Object.assign({}, state.networks),
+        isLoading: Object.assign({}, state.isLoading, {
+          [action.server.uniqueName]: false
+        }),
+        error: Object.assign({}, state.error, {
+          [action.server.uniqueName]: action.error
+        })
+      };
+    case UNLOAD_NETWORKS:
+      return {
+        networks: Object.assign({}, state.networks, {
+          [action.server.uniqueName]: undefined
+        }),
+        isLoading: Object.assign({}, state.isLoading, {
+          [action.server.uniqueName]: false
+        }),
+        error: Object.assign({}, state.error, {
+          [action.server.uniqueName]: false
+        })
       };
     default:
       return state;

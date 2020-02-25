@@ -55,9 +55,12 @@ const SideAndScreens = styled.div`
   display: flex;
   flex-direction: row;
   flex-grow: 1;
+  flex-shrink: 1;
+  overflow: auto;
 `;
 
 const ScreenSwitcher = styled.div`
+  flex-shrink: 1;
   flex-grow: 1;
   height: 100%;
   overflow: auto;
@@ -65,8 +68,8 @@ const ScreenSwitcher = styled.div`
 
 function App({ colors }) {
   return (
-    <AppWrapper {...colors}>
-      <Router>
+    <Router>
+      <AppWrapper {...colors}>
         <TopBar />
         <SideAndScreens>
           <Sidebar screens={screens} />
@@ -80,8 +83,8 @@ function App({ colors }) {
             ))}
           </ScreenSwitcher>
         </SideAndScreens>
-      </Router>
-    </AppWrapper>
+      </AppWrapper>
+    </Router>
   );
 }
 

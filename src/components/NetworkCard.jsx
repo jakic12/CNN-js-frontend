@@ -63,7 +63,6 @@ const NetworkImageDiv = styled.div`
 `;
 
 export default ({ network }) => {
-  console.log(network);
   return (
     <CardWrapper to={`/networks/` + network.id}>
       <NetworkImageDiv>

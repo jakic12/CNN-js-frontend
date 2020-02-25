@@ -10,6 +10,8 @@ import Logo from "./Logo";
 const TopBarStyled = styled.div`
   height: ${props => props.topbarheight};
   width: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
 `;
 
 const AboveSidebar = styled.div`

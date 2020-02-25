@@ -4,11 +4,11 @@ import { combineReducers } from "redux";
 import colors from "./colors";
 import structure from "./structure";
 import networks from "./networks";
-import config from "./config";
+import servers from "./servers";
 
 export default combineReducers({
   colors,
   structure,
   networks,
-  config
+  servers
 });

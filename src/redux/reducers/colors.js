@@ -3,7 +3,8 @@ import { SET_COLOR } from "../actions/colors";
 const defaultState = {
   background: `white`,
   primarycolor: `#2261c6`,
-  primarytextcolor: `white`
+  primarytextcolor: `white`,
+  errorcolor: `#e74c3c`
 };
 
 export default (state = defaultState, action) => {
