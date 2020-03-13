@@ -15,14 +15,17 @@ export function getNetworks(server) {
   });
 }
 
-export function createNetwork(name, server) {
+export function createNetwork(name, shape, server) {
   return new Promise((resolve, reject) => {
-    fetch(`${server.url}/createCnn?name=${name}`, {
-      method: `POST`,
-      headers: {
-        Authorization: `Bearer ${server.apiToken}`
+    fetch(
+      `${server.url}/createCnn?name=${name}&shape=${JSON.stringify(shape)}`,
+      {
+        method: `POST`,
+        headers: {
+          Authorization: `Bearer ${server.apiToken}`
+        }
       }
-    })
+    )
       .then(response => response.json())
       .then(json => {
         if (json.err) throw json.err;

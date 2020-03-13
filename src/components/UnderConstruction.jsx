@@ -21,6 +21,6 @@ const LoadingImage = styled.img`
 export default () => (
   <Wrapper>
     <LoadingImage src={gears} alt="spinning gears" />
-    <div>This components is still under construction</div>
+    <div>This component is still under construction</div>
   </Wrapper>
 );

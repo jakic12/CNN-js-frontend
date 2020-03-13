@@ -2,11 +2,17 @@ import React, { Component } from "react";
 
 // redux
 import { connect } from "react-redux";
-import { fetchNetworks } from "../redux/actions/networks";
+import { fetchNetworks, newNetwork } from "../redux/actions/networks";
 
 // components
-import NetworkCard, { NetworkCardParent } from "../components/NetworkCard";
+import NetworkCard, {
+  NetworkCardParent,
+  AddNetworkCard
+} from "../components/NetworkCard";
 import ServerLogin from "../components/ServerLogin";
+import Error from "../components/Error";
+
+import { NetworkArchitectures } from "../CNN-js/cnn";
 
 class Networks extends Component {
   constructor(props) {
@@ -45,18 +51,28 @@ class Networks extends Component {
             >
               {!this.props.networks.isLoading[server.uniqueName] &&
                 !this.props.networks.error[server.uniqueName] &&
-                this.props.networks.networks[server.uniqueName] &&
-                Object.keys(
-                  this.props.networks.networks[server.uniqueName]
-                ).map(id => {
-                  return (
-                    <NetworkCard
-                      network={
-                        this.props.networks.networks[server.uniqueName][id]
-                      }
+                this.props.networks.networks[server.uniqueName] && (
+                  <>
+                    {Object.keys(
+                      this.props.networks.networks[server.uniqueName]
+                    ).map(id => {
+                      return (
+                        <NetworkCard
+                          network={
+                            this.props.networks.networks[server.uniqueName][id]
+                          }
+                          server={server.uniqueName}
+                        />
+                      );
+                    })}
+                    <AddNetworkCard
+                      onclick={(name, shape) => {
+                        this.props.createNewNetwork(name, shape, server);
+                      }}
                     />
-                  );
-                })}
+                  </>
+                )}
+
               {this.props.networks.isLoading[server.uniqueName] && (
                 <div>loading</div>
               )}
@@ -64,7 +80,10 @@ class Networks extends Component {
                 this.props.networks.error[server.uniqueName] !==
                   `Unauthorized` && (
                   <div>
-                    error: {this.props.networks.error[server.uniqueName]}
+                    <Error
+                      error={this.props.networks.error[server.uniqueName]}
+                      retryFunction={() => this.props.getNetworks(server)}
+                    />
                   </div>
                 )}
               {this.props.networks.error[server.uniqueName] ===
@@ -80,6 +99,8 @@ class Networks extends Component {
 export default connect(
   state => state,
   dispatch => ({
-    getNetworks: server => fetchNetworks(server, dispatch)
+    getNetworks: server => fetchNetworks(server, dispatch),
+    createNewNetwork: (name, shape, server) =>
+      newNetwork(name, shape, server, dispatch)
   })
 )(Networks);

@@ -39,7 +39,7 @@ const screens = [
     )
   },
   {
-    path: `/networks/:networkId`,
+    path: `/networks/:serverUniqueName/:networkId`,
     component: Network
   }
 ];
