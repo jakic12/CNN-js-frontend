@@ -7,6 +7,7 @@ import { normalizeData } from "../other/utils";
 
 // components
 import Error from "./Error";
+import { IoIosArrowRoundForward } from "react-icons/io";
 
 const LayerType = require("../CNN-js/cnn").LayerType;
 
@@ -63,9 +64,13 @@ const LayerTypeTitle = styled.h5`
 `;
 
 const LayerSpacer = styled.div`
-  height: 100%;
   width: 1em;
-  background: black;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: ${0.83 + 1.67 + 1.3}em;
 `;
 
 //NETWORK LAYERS
@@ -136,11 +141,14 @@ const LAYER_STACK_slice_component = ({
     //                                ^ don't forget the margin
     left: extended ? `0em` : `${i / 5}em`,
     opacity: extended ? `1` : `${Math.max(1 - i / 10, 0)}`,
-    from: {
-      left: `${i / 5}em`,
-      top: `-${i / 5}em`,
-      opacity: `${Math.max(1 - i / 10, 0)}`
-    }
+    from:
+      i < 10
+        ? {
+            left: `${i / 5}em`,
+            top: `-${i / 5}em`,
+            opacity: `${Math.max(1 - i / 10, 0)}`
+          }
+        : {}
   });
 
   const filterProps = useSpring({
@@ -222,16 +230,21 @@ const LAYER_STACK = ({
           }}
         >
           <LAYER_STACK_wrapper style={wrapperStyle}>
-            {new Array(layer.d).fill(0).map((_, i) => (
-              <LAYER_STACK_slice_component
-                layer={layer}
-                i={i}
-                withData={withData}
-                layerNormalized={layerNormalized}
-                extended={extended}
-                filter={true}
-              />
-            ))}
+            {new Array(layer.d)
+              .fill(0)
+              .map(
+                (_, i) =>
+                  (extended || i < 10) && (
+                    <LAYER_STACK_slice_component
+                      layer={layer}
+                      i={i}
+                      withData={withData}
+                      layerNormalized={layerNormalized}
+                      extended={extended}
+                      filter={true}
+                    />
+                  )
+              )}
           </LAYER_STACK_wrapper>
         </div>
       )}
@@ -243,15 +256,20 @@ const LAYER_STACK = ({
         }}
       >
         <LAYER_STACK_wrapper style={wrapperStyle}>
-          {new Array(layer.d).fill(0).map((_, i) => (
-            <LAYER_STACK_slice_component
-              layer={layer}
-              i={i}
-              withData={withData}
-              layerNormalized={layerNormalized}
-              extended={extended}
-            />
-          ))}
+          {new Array(layer.d)
+            .fill(0)
+            .map(
+              (_, i) =>
+                (extended || i < 10) && (
+                  <LAYER_STACK_slice_component
+                    layer={layer}
+                    i={i}
+                    withData={withData}
+                    layerNormalized={layerNormalized}
+                    extended={extended}
+                  />
+                )
+            )}
         </LAYER_STACK_wrapper>
       </div>
     </>
@@ -289,15 +307,10 @@ export default ({ network, small, withData }) => {
               <>
                 <div key={`network_layer_${i}`}>
                   <NetworkLayerWrapper
-                    onMouseEnter={() => {
-                      setExtended(
-                        extended.map((_, i1) => extended[i] || i1 === i)
-                      );
-                    }}
-                    onMouseLeave={() => {
+                    onClick={() => {
                       setExtended(
                         extended.map((_, i1) =>
-                          i1 === i ? false : extended[i1]
+                          i1 === i ? !extended[i1] : extended[i1]
                         )
                       );
                     }}
@@ -344,7 +357,11 @@ export default ({ network, small, withData }) => {
                     </LayerTypeTitle>
                   </NetworkLayerWrapper>
                 </div>
-                <LayerSpacer />
+                {layerShape.type !== LayerType.FC && (
+                  <LayerSpacer>
+                    <IoIosArrowRoundForward />
+                  </LayerSpacer>
+                )}
               </>
             );
           })}
