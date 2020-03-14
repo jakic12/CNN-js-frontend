@@ -33,6 +33,10 @@ const StyledInputButton = styled.input`
   margin-left: 1em;
   border-radius: 5px;
   height: 100%;
+  background: white;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
 `;
 
 const ErrorDiv = styled.div`
