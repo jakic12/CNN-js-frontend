@@ -18,6 +18,15 @@ const NetworkWrapper = styled.div`
   box-sizing: border-box;
 `;
 
+const Title = styled.h1`
+  margin: 0.5em;
+  margin-left: 0;
+  margin-right: 0;
+
+  box-shadow: 0;
+  box-sizing: border-box;
+`;
+
 class Network extends Component {
   constructor(props) {
     super(props);
@@ -34,9 +43,15 @@ class Network extends Component {
         server => server.uniqueName === this.props.match.params.serverUniqueName
       )
     };
+
+    this.checkForError = this.checkForError.bind(this);
   }
 
   componentDidMount() {
+    this.checkForError();
+  }
+
+  checkForError() {
     const network =
       this.props.match.params.serverUniqueName &&
       this.props.match.params.networkId &&
@@ -44,6 +59,7 @@ class Network extends Component {
       this.props.networks.networks[this.props.match.params.serverUniqueName][
         this.props.match.params.networkId
       ];
+    if (network !== this.state.network) this.setState({ network });
     let error = undefined;
     if (!this.props.match.params.serverUniqueName) {
       error = `invalid server name`;
@@ -56,6 +72,10 @@ class Network extends Component {
       if (!this.state.server.apiToken) {
         error = `not logged in, redirecting...`;
         this.setState({ notLoggedIn: true });
+      } else {
+        if (!this.state.refreshRequestSent) {
+          this.setState({ needToRefreshNetwork: true });
+        }
       }
     } else if (
       !this.props.networks.networks[this.props.match.params.serverUniqueName][
@@ -63,11 +83,13 @@ class Network extends Component {
       ]
     ) {
       error = `network has not been cached`;
-      this.setState({ needToRefreshNetwork: true });
+      if (!this.state.refreshRequestSent)
+        this.setState({ needToRefreshNetwork: true });
     }
 
     if (network && network.reduced) {
-      this.setState({ needToRefreshNetwork: true });
+      if (!this.state.refreshRequestSent)
+        this.setState({ needToRefreshNetwork: true });
     }
 
     error =
@@ -81,12 +103,16 @@ class Network extends Component {
   }
 
   componentDidUpdate() {
+    this.checkForError();
     if (this.state.needToRefreshNetwork) {
-      this.setState({ needToRefreshNetwork: false }, () =>
-        this.props.getNetwork(
-          this.props.match.params.networkId,
-          this.state.server
-        )
+      this.setState(
+        { needToRefreshNetwork: false, refreshRequestSent: true },
+        () => {
+          this.props.getNetwork(
+            this.props.match.params.networkId,
+            this.state.server
+          );
+        }
       );
     }
 
@@ -111,13 +137,20 @@ class Network extends Component {
           />
         )}
         {this.state.network && (
-          <NetworkShapeVisual network={this.state.network} />
+          <>
+            <Title>{this.state.network.name}</Title>
+            <NetworkShapeVisual network={this.state.network} />
+          </>
         )}
         {this.props.networks.networkLoading[
           this.props.match.params.serverUniqueName +
             this.props.match.params.networkId
         ] && <div>Loading</div>}
-        {this.state.error && <Error error={this.state.error} />}
+        {!this.props.networks.networkLoading[
+          this.props.match.params.serverUniqueName +
+            this.props.match.params.networkId
+        ] &&
+          this.state.error && <Error error={this.state.error} />}
       </NetworkWrapper>
     );
   }
