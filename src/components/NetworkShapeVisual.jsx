@@ -8,14 +8,12 @@ import { normalizeData } from "../other/utils";
 // components
 import Error from "./Error";
 import { IoIosArrowRoundForward } from "react-icons/io";
+import { connect } from "react-redux";
 
 const LayerType = require("../CNN-js/cnn").LayerType;
 
 const WrapperCard = styled.div`
   width: 100%;
-  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12),
-    0 3px 5px -1px rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
 `;
 
 const NetworkVisualWrapper = styled.div`
@@ -23,7 +21,9 @@ const NetworkVisualWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: row;
-  overflow: auto;
+  overflow-x: auto;
+  padding: 2em;
+  box-sizing: border-box;
 `;
 
 const NetworkLayer = styled.div`
@@ -56,7 +56,13 @@ const NetworkFilterAndInput = styled.div`
   align-items: center;
 `;
 
-const NetworkLayerWrapper = styled.div``;
+const NetworkLayerWrapper = styled.div`
+  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12),
+    0 3px 5px -1px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 10px;
+  background: ${props => props.backgroundbyelevation(1)};
+`;
 
 const LayerTypeTitle = styled.h5`
   width: 100%;
@@ -71,6 +77,7 @@ const LayerSpacer = styled.div`
   flex-direction: row;
   align-items: center;
   margin-bottom: ${0.83 + 1.67 + 1.3}em;
+  padding: 10px;
 `;
 
 //NETWORK LAYERS
@@ -90,7 +97,7 @@ const LAYER_STACK_slice = styled(animated.div)`
   width: ${props => getSliceSize(props).w}em;
   height: ${props => getSliceSize(props).h}em;
   margin: 1em;
-  background: white;
+  background: ${props => props.backgroundbyelevation(3)};
   border: 1px solid grey;
   border-radius: 3px;
   position: absolute;
@@ -120,21 +127,16 @@ const LAYER_STACK_FILTER_inner = styled(animated.div)`
   box-sizing: border-box;
   max-height: 100%;
   max-width: 100%;
-  background: white;
+  background: ${props => props.backgroundbyelevation(3)};
   border: 1px solid grey;
   border-radius: 3px;
 `;
 const LAYER_STACK_wrapper = styled(animated.div)`
   position: relative;
 `;
-const LAYER_STACK_slice_component = ({
-  layer,
-  i,
-  withData,
-  layerNormalized,
-  extended,
-  filter
-}) => {
+const LAYER_STACK_slice_component = connect(state => ({
+  colors: state.colors
+}))(({ layer, i, withData, layerNormalized, extended, filter, colors }) => {
   const { w: slicewidth, h: sliceheight } = getSliceSize(layerNormalized);
   const layerSliceProps = useSpring({
     top: extended ? `${(sliceheight + 2) * i}em` : `-${i / 5}em`,
@@ -173,6 +175,7 @@ const LAYER_STACK_slice_component = ({
           i={i}
         >
           <LAYER_STACK_FILTER_inner
+            {...colors}
             style={filterProps}
             f={layerNormalized.f}
             w={layerNormalized.w}
@@ -187,6 +190,7 @@ const LAYER_STACK_slice_component = ({
     } else {
       return (
         <LAYER_STACK_slice
+          {...colors}
           style={Object.assign({}, layerSliceProps, filterProps)}
           key={`LAYER_STACK_layer_${i}`}
           w={layerNormalized.w}
@@ -196,7 +200,8 @@ const LAYER_STACK_slice_component = ({
       );
     }
   }
-};
+});
+
 const LAYER_STACK = ({
   layer,
   withData,
@@ -289,7 +294,9 @@ const normalizeLayers = shape => {
   return out;
 };
 
-export default ({ network, small, withData }) => {
+export default connect(state => ({
+  colors: state.colors
+}))(({ colors, network, small, withData }) => {
   const [extended, setExtended] = useState(
     new Array(network.shape.length).fill(false)
   );
@@ -307,6 +314,7 @@ export default ({ network, small, withData }) => {
               <>
                 <div key={`network_layer_${i}`}>
                   <NetworkLayerWrapper
+                    {...colors}
                     onClick={() => {
                       setExtended(
                         extended.map((_, i1) =>
@@ -357,11 +365,12 @@ export default ({ network, small, withData }) => {
                     </LayerTypeTitle>
                   </NetworkLayerWrapper>
                 </div>
-                {layerShape.type !== LayerType.FC && (
-                  <LayerSpacer>
+
+                <LayerSpacer>
+                  {layerShape.type !== LayerType.FC && (
                     <IoIosArrowRoundForward />
-                  </LayerSpacer>
-                )}
+                  )}
+                </LayerSpacer>
               </>
             );
           })}
@@ -372,4 +381,4 @@ export default ({ network, small, withData }) => {
       )}
     </WrapperCard>
   );
-};
+});

@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import { unloadNetworks } from "../redux/actions/networks";
 
 const ServerLoginWrapper = styled.div`
-  background: white;
+  background: ${props => props.backgroundbyelevation(1)};
   height: 2em;
   padding: 10px;
   box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12),
@@ -26,6 +26,8 @@ const StyledInput = styled.input`
   box-sizing: border-box;
   border-radius: 5px;
   border: none;
+  background: none;
+  color: ${props => props.subaccenttextcolor};
 `;
 
 const StyledInputButton = styled.input`
@@ -36,7 +38,13 @@ const StyledInputButton = styled.input`
   background: white;
   border-width: 1px;
   border-style: solid;
-  border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+  border-color: rgba(0, 0, 0, 0.16) rgb(0, 0, 0, 0.18) rgb(0, 0, 0, 0.27);
+  background: none;
+  color: ${props => props.textcolor};
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const ErrorDiv = styled.div`
@@ -64,7 +72,7 @@ export default connect(
 
   return (
     <>
-      <ServerLoginWrapper>
+      <ServerLoginWrapper {...colors}>
         <form
           onSubmit={evt => {
             evt.preventDefault();
@@ -77,14 +85,16 @@ export default connect(
             value={user}
             onChange={event => setUser(event.target.value)}
             placeholder={`username`}
+            {...colors}
           />
           <StyledInput
             type="password"
             value={pass}
             onChange={event => setPass(event.target.value)}
             placeholder={`password`}
+            {...colors}
           />
-          <StyledInputButton type="submit" value={`Login`} />
+          <StyledInputButton type="submit" value={`Login`} {...colors} />
         </form>
       </ServerLoginWrapper>
       {server.error && <ErrorDiv {...colors}>{server.error}</ErrorDiv>}

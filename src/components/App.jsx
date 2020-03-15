@@ -49,6 +49,7 @@ const AppWrapper = styled.div`
   flex-direction: column;
   height: 100%;
   background: ${props => props.background};
+  color: ${props => props.textcolor};
 `;
 
 const SideAndScreens = styled.div`

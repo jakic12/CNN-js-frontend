@@ -27,9 +27,9 @@ const cardWrapperCss = css`
     transform: scale(1.1);
   }
 
-  background: white;
+  background: ${props => props.backgroundbyelevation(1)};
   text-decoration: none;
-  color: black;
+  color: ${props => props.accenttextcolor};
   display: block;
 `;
 
@@ -38,7 +38,6 @@ const CardWrapper = styled(Link)`
 `;
 
 const BottomWrapper = styled.div`
-  background: white;
   height: 30%;
   width: 100%;
   border-bottom-right-radius: 5px;
@@ -72,9 +71,9 @@ const NetworkImageDiv = styled.div`
   flex-direction: row;
 `;
 
-export default ({ network, server }) => {
+export default connect(state => state)(({ colors, network, server }) => {
   return (
-    <CardWrapper to={`/networks/${server}/${network.id}`}>
+    <CardWrapper to={`/networks/${server}/${network.id}`} {...colors}>
       <NetworkImageDiv>
         <NetworkImage
           src="https://miro.medium.com/max/2636/1*3fA77_mLNiJTSgZFhYnU0Q.png"
@@ -86,7 +85,7 @@ export default ({ network, server }) => {
       </BottomWrapper>
     </CardWrapper>
   );
-};
+});
 
 const AddNetworkWrapper = styled.div`
   ${cardWrapperCss}
@@ -95,7 +94,7 @@ const AddNetworkWrapper = styled.div`
   justify-content:center;
   flex-direction:row;
   align-items:center;
-  background:none;
+  background:${props => props.backgroundbyelevation(1)};
   box-sizing:border-box;
   font-size: 1em;
   position:relative;
@@ -154,6 +153,7 @@ export const AddNetworkCard = connect(state => state)(
     return (
       <AddNetworkWrapper
         color={colors.primaryColor}
+        backgroundbyelevation={colors.backgroundbyelevation}
         onClick={() => setShow(true)}
         nohover={show}
       >
