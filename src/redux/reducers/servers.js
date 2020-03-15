@@ -15,6 +15,11 @@ if (savedServers_array)
 const defaultState = {
   servers: [
     {
+      url: `local`,
+      uniqueName: `Local storage`,
+      apiToken: `not needed`
+    },
+    {
       url: `http://localhost:3005`,
       //apiToken: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0YWY2NDdjNWQ0Yjc5MGJhN2ExNGIzZDZjOTY2ZTY0ZTM2ZTAyMzRiM2U4YzY0NmZlYzZjZjk5YzdhNmYyNDU5IiwiaWF0IjoxNTgyNTc3MzE1LCJleHAiOjE1ODMxODIxMTV9.EsPP7BQO8R4aKCjwxCN_xspVjqKQ3BR5BwJrRHL7GrA`,
       uniqueName: `Local server`,
@@ -36,11 +41,6 @@ const defaultState = {
         savedServers[`Local server1`] &&
         savedServers[`Local server1`].apiToken
     }
-    /*{
-      url: `http://localhost:3005`,
-      apiToken: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0YWY2NDdjNWQ0Yjc5MGJhN2ExNGIzZDZjOTY2ZTY0ZTM2ZTAyMzRiM2U4YzY0NmZlYzZjZjk5YzdhNmYyNDU5IiwiaWF0IjoxNTgyNTc3MzE1LCJleHAiOjE1ODMxODIxMTV9.EsPP7BQO8R4aKCjwxCN_xspVjqKQ3BR5BwJrRHL7GrA`,
-      uniqueName: `Local server`
-    }*/
   ]
 };
 

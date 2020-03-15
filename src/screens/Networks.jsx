@@ -14,6 +14,12 @@ import Error from "../components/Error";
 
 import { NetworkArchitectures } from "../CNN-js/cnn";
 
+const translateError = error => {
+  let strError = `${error}`;
+  console.error(error);
+  return `Server unavailable`;
+};
+
 class Networks extends Component {
   constructor(props) {
     super(props);
@@ -81,7 +87,9 @@ class Networks extends Component {
                   `Unauthorized` && (
                   <div>
                     <Error
-                      error={this.props.networks.error[server.uniqueName]}
+                      error={translateError(
+                        this.props.networks.error[server.uniqueName]
+                      )}
                       retryFunction={() => this.props.getNetworks(server)}
                     />
                   </div>
