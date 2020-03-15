@@ -62,6 +62,10 @@ const NetworkLayerWrapper = styled.div`
   border-radius: 5px;
   padding: 10px;
   background: ${props => props.backgroundbyelevation(1)};
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const LayerTypeTitle = styled.h5`
@@ -98,7 +102,7 @@ const LAYER_STACK_slice = styled(animated.div)`
   height: ${props => getSliceSize(props).h}em;
   margin: 1em;
   background: ${props => props.backgroundbyelevation(3)};
-  border: 1px solid grey;
+  border: 1px solid ${props => (props.darkMode ? `gray` : props.primarycolor)};
   border-radius: 3px;
   position: absolute;
   z-index: ${props => 300 - props.i};
@@ -128,7 +132,7 @@ const LAYER_STACK_FILTER_inner = styled(animated.div)`
   max-height: 100%;
   max-width: 100%;
   background: ${props => props.backgroundbyelevation(3)};
-  border: 1px solid grey;
+  border: 1px solid ${props => (props.darkMode ? `gray` : props.primarycolor)};
   border-radius: 3px;
 `;
 const LAYER_STACK_wrapper = styled(animated.div)`
@@ -304,7 +308,6 @@ export default connect(state => ({
     network && network.shape ? normalizeLayers(network.shape) : undefined
   );
 
-  console.log(network.shape, layersNormalized);
   return (
     <WrapperCard>
       {network && network.shape && (

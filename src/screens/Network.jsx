@@ -9,7 +9,9 @@ import { connect } from "react-redux";
 import NetworkShapeVisual from "../components/NetworkShapeVisual";
 import styled from "styled-components";
 import Error from "../components/Error";
+import KeyValueTable from "../components/KeyValueTable";
 
+//redux actions
 import { fetchNetwork } from "../redux/actions/networks";
 
 const NetworkWrapper = styled.div`
@@ -19,6 +21,15 @@ const NetworkWrapper = styled.div`
 `;
 
 const Title = styled.h1`
+  margin: 0.5em;
+  margin-left: 0;
+  margin-right: 0;
+
+  box-shadow: 0;
+  box-sizing: border-box;
+`;
+
+const Subtitle = styled.h2`
   margin: 0.5em;
   margin-left: 0;
   margin-right: 0;
@@ -140,6 +151,12 @@ class Network extends Component {
           <>
             <Title>{this.state.network.name}</Title>
             <NetworkShapeVisual network={this.state.network} />
+            <Subtitle>Parameters</Subtitle>
+            <KeyValueTable
+              data={this.state.network}
+              include={[`name`, `learningRate`]}
+              editFunction={(key, newValue) => {}}
+            />
           </>
         )}
         {this.props.networks.networkLoading[
