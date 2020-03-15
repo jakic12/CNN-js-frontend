@@ -5,13 +5,14 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 
 // router
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const SidebarWrapper = styled.aside`
   height: 100%;
   width: ${props => props.sidebarwidth};
   border-top-right-radius: 20px;
-  background: ${props => props.primarycolor};
+  background: ${props =>
+    props.darkMode ? props.background : props.primarycolor};
   flex-shrink: 0;
 `;
 
@@ -22,7 +23,9 @@ const SidebarInside = styled.div`
   box-sizing: border-box;
 `;
 
-const SidebarItemLink = styled(Link)`
+const SidebarItemLink = styled(NavLink).attrs({
+  activeClassName: `linkActive`
+})`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -31,6 +34,12 @@ const SidebarItemLink = styled(Link)`
   box-sizing: border-box;
   text-decoration: none;
   color: ${props => props.primarytextcolor};
+  border-radius: 8px;
+
+  &.linkActive {
+    font-weight: bold;
+    background: ${props => (props.darkMode ? props.primarycolor : `none`)};
+  }
 `;
 
 const SidebarItemIcon = styled.img`
@@ -46,7 +55,11 @@ const Sidebar = ({ colors, screens, structure }) => {
           const ScreenIcon = screen.icon;
           if (screen.fullName)
             return (
-              <SidebarItemLink to={screen.path} {...colors}>
+              <SidebarItemLink
+                to={screen.path}
+                {...colors}
+                exact={screen.exactLink}
+              >
                 <div style={{ paddingRight: `0.5em` }}>
                   <ScreenIcon
                     style={{

@@ -27,6 +27,7 @@ const screens = [
     fullName: `Dashboard`,
     component: Dashboard,
     exact: true,
+    exactLink: true,
     icon: MdHome
   },
   {

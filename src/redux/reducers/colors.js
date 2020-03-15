@@ -6,14 +6,15 @@ const defaultState = {
   background: darkMode ? `#121212` : `white`,
   backgroundbyelevation: e =>
     darkMode ? `rgb(${18 + e * 20},${18 + e * 20},${18 + e * 20})` : `white`,
-  primarycolor: darkMode ? `#121212` : `#2261c6`,
+  primarycolor: `#2261c6`,
   primarytextcolor: `white`,
   errorcolor: `#e74c3c`,
   textcolor: darkMode ? `rgb(${255 * 0.6},${255 * 0.6},${255 * 0.6})` : `black`,
   accenttextcolor: darkMode ? `rgb(${255 * 1},${255 * 1},${255 * 1})` : `black`,
   subaccenttextcolor: darkMode
     ? `rgb(${255 * 0.5},${255 * 0.5},${255 * 0.5})`
-    : `black`
+    : `black`,
+  darkMode
 };
 
 export default (state = defaultState, action) => {
