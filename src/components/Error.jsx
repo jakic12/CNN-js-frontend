@@ -13,6 +13,12 @@ const ErrorDiv = styled.div`
   align-items: center;
 `;
 
+export const translateError = error => {
+  let strError = `${error}`;
+  console.error(error);
+  return `Server unavailable`;
+};
+
 const rotate = keyframes`
   from {
     transform: rotate(0deg);

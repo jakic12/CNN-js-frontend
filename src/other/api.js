@@ -6,17 +6,19 @@ export function getNetworks(server) {
       const localExisting = JSON.parse(localStorage.getItem(`localNetworks`));
       if (!localExisting) {
         localStorage.setItem(`localNetworks`, `{}`);
+        localExisting = {};
       }
-      resolve(
-        (localExisting &&
-          Object.keys(localExisting).map(stringCNNIndex => {
-            const o = new CNN(localExisting[stringCNNIndex]);
-            o.name = localExisting[stringCNNIndex].name;
-            o.id = localExisting[stringCNNIndex].id;
-            return o;
-          })) ||
-          {}
-      );
+
+      const deserialized = {};
+
+      Object.keys(localExisting).forEach(stringCNNIndex => {
+        const o = new CNN(localExisting[stringCNNIndex]);
+        o.name = localExisting[stringCNNIndex].name;
+        o.id = localExisting[stringCNNIndex].id;
+        deserialized[stringCNNIndex] = o;
+      });
+
+      resolve(deserialized);
     } else {
       fetch(`${server.url}/getNetworks`, {
         method: `GET`,

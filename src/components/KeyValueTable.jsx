@@ -45,20 +45,30 @@ const KeyValueWrapper = styled.div`
 
 const KeyValueTable = ({ data, editFunction, colors, include }) => (
   <KeyValueWrapper>
-    {Object.keys(data).map(
-      key =>
-        ((include && include.includes(key)) || !include) && (
-          <Card {...colors} key={`key_value_table_${key}`}>
-            <Key>{key}</Key>
-            <Value>
-              <StyledInput
-                value={data[key]}
-                onChange={evt => editFunction(key, evt.target.value)}
-              />
-            </Value>
-          </Card>
-        )
-    )}
+    {!include &&
+      Object.keys(data).map(key => (
+        <Card {...colors} key={`key_value_table_${key}`}>
+          <Key>{key}</Key>
+          <Value>
+            <StyledInput
+              value={data[key]}
+              onChange={evt => editFunction(key, evt.target.value)}
+            />
+          </Value>
+        </Card>
+      ))}
+    {include &&
+      include.map(key => (
+        <Card {...colors} key={`key_value_table_${key}`}>
+          <Key>{key}</Key>
+          <Value>
+            <StyledInput
+              value={data[key]}
+              onChange={evt => editFunction(key, evt.target.value)}
+            />
+          </Value>
+        </Card>
+      ))}
   </KeyValueWrapper>
 );
 

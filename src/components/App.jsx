@@ -10,6 +10,7 @@ import TopBar from "./TopBar";
 import Dashboard from "../screens/Dashboard";
 import Networks from "../screens/Networks";
 import Network from "../screens/Network";
+import Learning from "../screens/Learning";
 
 // router
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
@@ -20,6 +21,7 @@ import { connect } from "react-redux";
 // resources
 import { MdHome } from "react-icons/md";
 import { IoMdGitNetwork } from "react-icons/io";
+import { MdSchool } from "react-icons/md";
 
 const screens = [
   {
@@ -42,6 +44,13 @@ const screens = [
   {
     path: `/networks/:serverUniqueName/:networkId`,
     component: Network
+  },
+  {
+    path: `/learning`,
+    fullName: `Learning`,
+    component: Learning,
+    exact: true,
+    icon: MdSchool
   }
 ];
 

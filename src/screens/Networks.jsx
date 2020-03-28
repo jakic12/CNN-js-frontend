@@ -10,15 +10,9 @@ import NetworkCard, {
   AddNetworkCard
 } from "../components/NetworkCard";
 import ServerLogin from "../components/ServerLogin";
-import Error from "../components/Error";
+import Error, { translateError } from "../components/Error";
 
 import { NetworkArchitectures } from "../CNN-js/cnn";
-
-const translateError = error => {
-  let strError = `${error}`;
-  console.error(error);
-  return `Server unavailable`;
-};
 
 class Networks extends Component {
   constructor(props) {
@@ -67,6 +61,7 @@ class Networks extends Component {
                           network={
                             this.props.networks.networks[server.uniqueName][id]
                           }
+                          draggable={true}
                           server={server.uniqueName}
                         />
                       );

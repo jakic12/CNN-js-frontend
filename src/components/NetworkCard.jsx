@@ -37,6 +37,14 @@ const CardWrapper = styled(Link)`
   ${cardWrapperCss}
 `;
 
+const CardWrapperNoLink = styled.div`
+  ${cardWrapperCss}
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 const BottomWrapper = styled.div`
   height: 30%;
   width: 100%;
@@ -71,21 +79,92 @@ const NetworkImageDiv = styled.div`
   flex-direction: row;
 `;
 
-export default connect(state => state)(({ colors, network, server }) => {
-  return (
-    <CardWrapper to={`/networks/${server}/${network.id}`} {...colors}>
-      <NetworkImageDiv>
-        <NetworkImage
-          src="https://miro.medium.com/max/2636/1*3fA77_mLNiJTSgZFhYnU0Q.png"
-          alt="neural network icon"
-        />
-      </NetworkImageDiv>
-      <BottomWrapper>
-        <NetworkTitle>{network.name}</NetworkTitle>
-      </BottomWrapper>
-    </CardWrapper>
-  );
-});
+export default connect(state => state)(
+  ({ colors, network, server, draggable, onClick, getRef }) => {
+    /*
+    // draggable too buggy
+    const [dragging, setDragging] = useState(false);
+    const [cardPosition, setCardPosition] = useState();
+
+    const cardRef = React.createRef();
+    const replacementCardRef = React.createRef();*/
+
+    const Wrapper = onClick ? CardWrapperNoLink : CardWrapper;
+
+    return (
+      <Wrapper
+        to={onClick ? "" : `/networks/${server}/${network.id}`}
+        onClick={onClick}
+        {...colors}
+        ref={getRef && (ref => getRef(ref))}
+        /*
+        // draggable too buggy
+        
+        ref={cardRef}
+        onMouseDown={
+          draggable
+            ? function(e) {
+                var draggingElement = cardRef.current;
+                var clientRect = draggingElement.getBoundingClientRect();
+                e.preventDefault();
+                var dragStart = { x: e.clientX, y: e.clientY };
+                var localDragging = false;
+                var draggingOffset = {
+                  x: e.clientX - clientRect.left,
+                  y: e.clientY - clientRect.top
+                };
+
+                const dragHandler = e1 => {
+                  if (!localDragging) {
+                    if (
+                      Math.abs(e1.clientX - dragStart.x) > 10 ||
+                      Math.abs(e1.clientY - dragStart.y) > 10
+                    ) {
+                      setDragging(true);
+                      localDragging = true;
+                    }
+                  } else {
+                    draggingElement.style.position = `absolute`;
+                    draggingElement.style.left =
+                      e1.clientX - draggingOffset.x + `px`;
+                    draggingElement.style.top =
+                      e1.clientY - draggingOffset.y + `px`;
+                  }
+                };
+
+                const mouseUpHandler = () => {
+                  localDragging = false;
+                  document.removeEventListener("mousemove", dragHandler);
+                  document.removeEventListener("mousemove", mouseUpHandler);
+                };
+
+                document.addEventListener("mousemove", dragHandler);
+                document.addEventListener("mouseup", mouseUpHandler);
+              }
+            : undefined
+        }
+        onClick={
+          dragging
+            ? e => {
+                e.preventDefault();
+                setDragging(false);
+              }
+            : undefined
+        }*/
+      >
+        <NetworkImageDiv>
+          <NetworkImage
+            src="https://cdn3.iconfinder.com/data/icons/various-networks/64/backpropagation_neural_network-512.png"
+            alt="neural network icon"
+          />
+        </NetworkImageDiv>
+        <BottomWrapper>
+          <NetworkTitle>{network.name}</NetworkTitle>
+        </BottomWrapper>
+      </Wrapper>
+    );
+  }
+);
 
 const AddNetworkWrapper = styled.div`
   ${cardWrapperCss}
