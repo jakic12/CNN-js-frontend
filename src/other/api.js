@@ -1,9 +1,11 @@
+import testDataset from "./testDataset";
+import { stringToUint8Array } from "../CNN-js/datasetProcessor";
 const { CNN, NetworkArchitectures } = require("../CNN-js/cnn");
 
 export function getNetworks(server) {
   return new Promise((resolve, reject) => {
     if (server.url === `local`) {
-      const localExisting = JSON.parse(localStorage.getItem(`localNetworks`));
+      let localExisting = JSON.parse(localStorage.getItem(`localNetworks`));
       if (!localExisting) {
         localStorage.setItem(`localNetworks`, `{}`);
         localExisting = {};
@@ -11,7 +13,7 @@ export function getNetworks(server) {
 
       const deserialized = {};
 
-      Object.keys(localExisting).forEach(stringCNNIndex => {
+      Object.keys(localExisting).forEach((stringCNNIndex) => {
         const o = new CNN(localExisting[stringCNNIndex]);
         o.name = localExisting[stringCNNIndex].name;
         o.id = localExisting[stringCNNIndex].id;
@@ -23,11 +25,11 @@ export function getNetworks(server) {
       fetch(`${server.url}/getNetworks`, {
         method: `GET`,
         headers: {
-          Authorization: `Bearer ${server.apiToken}`
-        }
+          Authorization: `Bearer ${server.apiToken}`,
+        },
       })
-        .then(response => response.json())
-        .then(json => {
+        .then((response) => response.json())
+        .then((json) => {
           if (json.err) throw json.err;
           resolve(json);
         })
@@ -55,12 +57,12 @@ export function createNetwork(name, shape, server) {
         {
           method: `POST`,
           headers: {
-            Authorization: `Bearer ${server.apiToken}`
-          }
+            Authorization: `Bearer ${server.apiToken}`,
+          },
         }
       )
-        .then(response => response.json())
-        .then(json => {
+        .then((response) => response.json())
+        .then((json) => {
           if (json.err) throw json.err;
           resolve(json);
         })
@@ -77,7 +79,7 @@ export function getNetwork(id, server) {
         resolve(
           Object.assign(new CNN(existing[id]), {
             name: existing[id].name,
-            id: existing[id].id
+            id: existing[id].id,
           })
         );
       } else {
@@ -86,11 +88,11 @@ export function getNetwork(id, server) {
     } else {
       fetch(`${server.url}/getNetwork/${id}`, {
         headers: {
-          Authorization: `Bearer ${server.apiToken}`
-        }
+          Authorization: `Bearer ${server.apiToken}`,
+        },
       })
-        .then(res => res.json())
-        .then(json => {
+        .then((res) => res.json())
+        .then((json) => {
           if (json.err) throw json.err;
           else resolve(json);
         })
@@ -104,18 +106,79 @@ export function login(user, pass, server) {
     fetch(`${server.url}/login`, {
       method: `POST`,
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         user,
-        pass
-      })
+        pass,
+      }),
     })
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         if (json.err) throw json.err;
         else resolve(json.token);
       })
       .catch(reject);
+  });
+}
+
+export function getDatasets(server) {
+  return new Promise((resolve, reject) => {
+    if (server.url === `local`) {
+      let localExisting = JSON.parse(localStorage.getItem(`localDatasets`));
+      if (!localExisting) {
+        /*localStorage.setItem(
+          `localDatasets`,
+          JSON.stringify({ testDataset: testDataset })
+        );*/
+        localExisting = { testDataset: testDataset };
+      }
+
+      Object.keys(localExisting).forEach((id) => {
+        debugger;
+        console.log(localExisting[id].data.length);
+        localExisting[id].data = stringToUint8Array(localExisting[id].data);
+        localExisting[id].full = true;
+      });
+      resolve(localExisting);
+    } else {
+      fetch(`${server.url}/getDatasets`, {
+        method: `GET`,
+        headers: {
+          Authorization: `Bearer ${server.apiToken}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          if (json.err) throw json.err;
+          resolve(json);
+        })
+        .catch(reject);
+    }
+  });
+}
+
+export function getDataset(id, server) {
+  return new Promise((resolve, reject) => {
+    if (server.url === `local`) {
+      const existing = JSON.parse(localStorage.getItem(`localDatasets`));
+      if (existing[id]) {
+        resolve(existing[id]);
+      } else {
+        reject(`Dataset doesn't exist`);
+      }
+    } else {
+      fetch(`${server.url}/getDataset/${id}`, {
+        headers: {
+          Authorization: `Bearer ${server.apiToken}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.err) throw json.err;
+          else resolve(json);
+        })
+        .catch(reject);
+    }
   });
 }

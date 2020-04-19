@@ -7,8 +7,8 @@ import styled from "styled-components";
 const SpringButtonStyled = styled(animated.div)`
   width: 100%;
   padding: 1em;
-  background: ${props => props.color};
-  color: ${props => props.textColor};
+  background: ${(props) => props.color};
+  color: ${(props) => props.textColor};
   border: none;
   border-radius: 3px;
   box-sizing: border-box;
@@ -19,13 +19,13 @@ const SpringButtonStyled = styled(animated.div)`
   }
 `;
 
-const SpringButton = ({ color, textColor, text }) => {
+const SpringButton = ({ color, textColor, text, onClick }) => {
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
 
   const buttonStyle = useSpring({
     transform: `scale(${clicked ? 0.8 : hovered ? 1.1 : 1}`,
-    config: config.gentle
+    config: config.gentle,
   });
 
   if (clicked) {
@@ -42,7 +42,10 @@ const SpringButton = ({ color, textColor, text }) => {
         setHovered(false);
         setClicked(false);
       }}
-      onClick={() => setClicked(true)}
+      onClick={(e) => {
+        if (onClick) onClick(e);
+        setClicked(true);
+      }}
     >
       {text}
     </SpringButtonStyled>

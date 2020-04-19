@@ -6,6 +6,8 @@ import KeyValueTable from "../components/KeyValueTable";
 
 import styled from "styled-components";
 
+import { fetchNetwork } from "../redux/actions/networks";
+
 //components
 import SpringButton from "../components/SpringButton";
 import NetworkSelect from "../components/NetworkSelect";
@@ -66,6 +68,14 @@ const StartLearningButtonWrapper = styled.div`
 `;
 
 class Learning extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      network: undefined,
+      dataset: undefined,
+    };
+  }
   render() {
     return (
       <LearningWrapper>
@@ -74,7 +84,16 @@ class Learning extends React.Component {
             <TwoPartVertical>
               <TwoPartVerticalChild>
                 <Title>Network</Title>
-                <NetworkSelect />
+                <NetworkSelect
+                  onNetworkSelect={(server, networkId) => {
+                    if (
+                      this.props.networks.networks[server.uniqueName][networkId]
+                        .reduced
+                    ) {
+                      this.props.getNetwork(networkId, server);
+                    }
+                  }}
+                />
               </TwoPartVerticalChild>
               <TwoPartVerticalChild>
                 <Title>Dataset</Title>
@@ -95,6 +114,7 @@ class Learning extends React.Component {
                 text={`Start learning`}
                 color={this.props.colors.primarycolor}
                 textColor={this.props.colors.primarytextcolor}
+                onClick={() => {}}
               />
             </StartLearningButtonWrapper>
           </TwoPartChild>
@@ -105,8 +125,15 @@ class Learning extends React.Component {
 }
 
 export default connect(
-  state => ({ ...state.learning, colors: state.colors }),
-  dispatch => ({
-    setLearningParam: (key, value) => dispatch(setLearningParam(key, value))
+  (state) => ({
+    ...state.learning,
+    colors: state.colors,
+    networks: state.networks,
+    servers: state.servers,
+  }),
+  (dispatch) => ({
+    setLearningParam: (key, value) => dispatch(setLearningParam(key, value)),
+    getNetwork: (networkId, server) =>
+      fetchNetwork(networkId, server, dispatch),
   })
 )(Learning);

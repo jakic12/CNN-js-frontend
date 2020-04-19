@@ -40,7 +40,7 @@ const SelectableBigNetworkList = ({
   servers,
   networks,
   onSelect,
-  refreshFunction
+  refreshFunction,
 }) => {
   const [selected, select] = React.useState(false);
   const [serversWithError, setServersWithError] = React.useState({});
@@ -83,7 +83,7 @@ const SelectableBigNetworkList = ({
                     network={networks.networks[server.uniqueName][networkId]}
                     onClick={() => {
                       select(networks.networks[server.uniqueName][networkId]);
-                      onSelect(server.uniqueName, networkId);
+                      onSelect(server, networkId);
                     }}
                   />
                 )

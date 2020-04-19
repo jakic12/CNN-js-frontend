@@ -11,6 +11,7 @@ import Dashboard from "../screens/Dashboard";
 import Networks from "../screens/Networks";
 import Network from "../screens/Network";
 import Learning from "../screens/Learning";
+import Datasets from "../screens/Datasets";
 
 // router
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
@@ -19,9 +20,8 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
 // resources
-import { MdHome } from "react-icons/md";
+import { MdHome, MdSchool, MdPhotoLibrary } from "react-icons/md";
 import { IoMdGitNetwork } from "react-icons/io";
-import { MdSchool } from "react-icons/md";
 
 const screens = [
   {
@@ -30,7 +30,7 @@ const screens = [
     component: Dashboard,
     exact: true,
     exactLink: true,
-    icon: MdHome
+    icon: MdHome,
   },
   {
     path: `/networks`,
@@ -39,27 +39,34 @@ const screens = [
     exact: true,
     icon: ({ style }) => (
       <IoMdGitNetwork style={{ transform: `rotate(-90deg)`, ...style }} />
-    )
+    ),
+  },
+  {
+    path: `/datasets`,
+    fullName: `Datasets`,
+    component: Datasets,
+    exact: true,
+    icon: MdPhotoLibrary,
   },
   {
     path: `/networks/:serverUniqueName/:networkId`,
-    component: Network
+    component: Network,
   },
   {
     path: `/learning`,
     fullName: `Learning`,
     component: Learning,
     exact: true,
-    icon: MdSchool
-  }
+    icon: MdSchool,
+  },
 ];
 
 const AppWrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: ${props => props.background};
-  color: ${props => props.textcolor};
+  background: ${(props) => props.background};
+  color: ${(props) => props.textcolor};
 `;
 
 const SideAndScreens = styled.div`
@@ -85,7 +92,7 @@ function App({ colors }) {
         <SideAndScreens>
           <Sidebar screens={screens} />
           <ScreenSwitcher>
-            {screens.map(screen => (
+            {screens.map((screen) => (
               <Route
                 path={screen.path}
                 component={screen.component}
@@ -99,4 +106,4 @@ function App({ colors }) {
   );
 }
 
-export default connect(state => state)(App);
+export default connect((state) => state)(App);

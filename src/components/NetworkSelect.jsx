@@ -35,12 +35,12 @@ const SelectNetworkWrapper = styled.div`
     cursor: pointer;
   }
 
-  background: ${props => props.backgroundbyelevation(1)};
+  background: ${(props) => props.backgroundbyelevation(1)};
   text-decoration: none;
-  color: ${props => props.accenttextcolor};
+  color: ${(props) => props.accenttextcolor};
   display: block;
 
-  border: 2px ${props => props.color} dashed;
+  border: 2px ${(props) => props.color} dashed;
   box-sizing: border-box;
   font-size: 1em;
   display: flex;
@@ -61,25 +61,25 @@ const NetworkSelect = ({
   innerRef,
   servers,
   networks,
-  getNetworks
+  getNetworks,
+  getNetwork,
+  onNetworkSelect, //(server, networkId) => {}
 }) => {
   const [selectedId, selectId] = useState();
   const [open, setOpen] = useState(false);
   const [wrapperRef, setWrapperRef] = useState();
 
   React.useEffect(() => {
-    servers.servers.map(s => {
+    servers.servers.map((s) => {
       getNetworks(s);
     });
   }, []);
-
-  console.log(servers.servers, networks.networks);
 
   return (
     <NetworkSelectWrapper onClick={() => setOpen(true)}>
       {(!selectedId || open) && (
         <>
-          <SelectNetworkWrapper {...colors} ref={ref => setWrapperRef(ref)}>
+          <SelectNetworkWrapper {...colors} ref={(ref) => setWrapperRef(ref)}>
             Select network
           </SelectNetworkWrapper>
           {open && (
@@ -89,17 +89,21 @@ const NetworkSelect = ({
               onCloseCallback={() => {
                 setOpen(false);
               }}
-              contentFunction={closeCard => {
+              contentFunction={(closeCard) => {
                 return (
                   <InnerNoOverflow>
                     <SelectableBigNetworkList
                       servers={servers}
                       networks={networks}
-                      onSelect={(serverId, networkId) => {
+                      onSelect={(server, networkId) => {
                         closeCard(false);
-                        selectId({ server: serverId, network: networkId });
+                        onNetworkSelect(server, networkId);
+                        selectId({
+                          server: server.uniqueName,
+                          network: networkId,
+                        });
                       }}
-                      refreshFunction={server => getNetworks(server)}
+                      refreshFunction={(server) => getNetworks(server)}
                     />
                   </InnerNoOverflow>
                 );
@@ -114,7 +118,7 @@ const NetworkSelect = ({
           onClick={() => {
             setOpen(true);
           }}
-          getRef={ref => setWrapperRef(ref)}
+          getRef={(ref) => setWrapperRef(ref)}
         />
       )}
     </NetworkSelectWrapper>
@@ -122,8 +126,8 @@ const NetworkSelect = ({
 };
 
 export default connect(
-  state => state,
-  dispatch => ({
-    getNetworks: server => fetchNetworks(server, dispatch)
+  (state) => state,
+  (dispatch) => ({
+    getNetworks: (server) => fetchNetworks(server, dispatch),
   })
 )(NetworkSelect);

@@ -15,7 +15,7 @@ const Wrapper = styled(animated.div)`
 `;
 
 const AnimatedCard = styled(animated.div)`
-  background: ${props => props.backgroundbyelevation(1)};
+  background: ${(props) => props.backgroundbyelevation(1)};
   position: absolute;
   z-index: 2000;
 `;
@@ -25,7 +25,7 @@ const AnimFSC = ({
   contentFunction,
   colors,
   fullscreen,
-  onCloseCallback
+  onCloseCallback,
 }) => {
   const [innerDivRef, setInnerDivRef] = useState();
   const [wrapperRef, setWrapperRef] = useState();
@@ -50,7 +50,7 @@ const AnimFSC = ({
     top: 0,
     left: 0,
     height: 0,
-    width: 0
+    width: 0,
   };
 
   const innerDivStyle = (!fullscreen &&
@@ -59,7 +59,7 @@ const AnimFSC = ({
     top: 0,
     left: 0,
     height: Math.max(0, wrapperDivStyle.height - 50),
-    width: Math.max(0, wrapperDivStyle.width - 50)
+    width: Math.max(0, wrapperDivStyle.width - 50),
   };
 
   const startAnimatedProps = {
@@ -69,10 +69,8 @@ const AnimFSC = ({
     height: prevStyle.height + `px`,
     boxShadow: startComputedStyle.boxShadow,
     borderWidth:
-      startComputedStyle.borderWidth || startComputedStyle["border-top-width"]
+      startComputedStyle.borderWidth || startComputedStyle["border-top-width"],
   };
-
-  console.log(startAnimatedProps);
 
   const cardProps = useSpring({
     from: startAnimatedProps,
@@ -94,7 +92,7 @@ const AnimFSC = ({
             startComputedStyle.borderStyle ||
             startComputedStyle["border-top-style"],
           borderWidth: `0px`,
-          opacity: 1
+          opacity: 1,
         },
     config: closing ? { ...config.gentle, clamp: true } : config.gentle,
     onRest: () => {
@@ -103,16 +101,16 @@ const AnimFSC = ({
         setClosing(false);
         startFromElement.style.opacity = 1;
       }
-    }
+    },
   });
 
   const wrapperProps = useSpring({
     to: {
-      background: closing ? `rgba(0, 0, 0, 0)` : `rgba(0, 0, 0, 0.2)`
+      background: closing ? `rgba(0, 0, 0, 0)` : `rgba(0, 0, 0, 0.2)`,
     },
     from: {
-      background: `rgba(0, 0, 0, 0)`
-    }
+      background: `rgba(0, 0, 0, 0)`,
+    },
   });
 
   const resizeHandler = () => setResizeUpdater(Math.random());
@@ -126,13 +124,13 @@ const AnimFSC = ({
 
   return (
     <Wrapper
-      ref={ref => setWrapperRef(ref)}
-      onClick={e => (e.target === wrapperRef ? setClosing(true) : false)}
+      ref={(ref) => setWrapperRef(ref)}
+      onClick={(e) => (e.target === wrapperRef ? setClosing(true) : false)}
       style={wrapperProps}
     >
       <AnimatedCard {...colors} style={cardProps}>
         <div
-          ref={ref => setInnerDivRef(ref)}
+          ref={(ref) => setInnerDivRef(ref)}
           style={fullscreen ? { height: `100%`, width: `100%` } : {}}
         >
           {contentFunction(() => setClosing(true))}
@@ -142,4 +140,4 @@ const AnimFSC = ({
   );
 };
 
-export default connect(state => state)(AnimFSC);
+export default connect((state) => state)(AnimFSC);
