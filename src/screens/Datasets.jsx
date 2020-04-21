@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { fetchDatasets } from "../redux/actions/datasets";
 import { NetworkCardParent } from "../components/NetworkCard";
-import Error from "../components/Error";
+import Error, { translateError } from "../components/Error";
 import ServerLogin from "../components/ServerLogin";
 import DatasetCard from "../components/DatasetCard";
 
@@ -32,9 +32,9 @@ class Datasets extends React.Component {
               this.props.datasets.serverDatasetsError[server.uniqueName] !==
                 `Unauthorized` && (
                 <Error
-                  error={
+                  error={translateError(
                     this.props.datasets.serverDatasetsError[server.uniqueName]
-                  }
+                  )}
                   retryFunction={() => this.props.fetchDatasets(server)}
                 />
               )}
