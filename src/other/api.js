@@ -135,9 +135,10 @@ export function getDatasets(server) {
       }
 
       Object.keys(localExisting).forEach((id) => {
-        debugger;
         console.log(localExisting[id].data.length);
-        localExisting[id].data = stringToUint8Array(localExisting[id].data);
+        if (typeof localExisting[id].data === "string") {
+          localExisting[id].data = stringToUint8Array(localExisting[id].data);
+        }
         localExisting[id].full = true;
       });
       resolve(localExisting);
@@ -151,6 +152,7 @@ export function getDatasets(server) {
         .then((response) => response.json())
         .then((json) => {
           if (json.err) throw json.err;
+          //TODO: parse string data to uint8Array
           resolve(json);
         })
         .catch(reject);

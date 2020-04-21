@@ -7,11 +7,12 @@ import KeyValueTable from "../components/KeyValueTable";
 import styled from "styled-components";
 
 import { fetchNetwork } from "../redux/actions/networks";
+import { fetchDataset } from "../redux/actions/datasets";
 
 //components
 import SpringButton from "../components/SpringButton";
 import NetworkSelect from "../components/NetworkSelect";
-import AnimatedFullScreenCard from "../components/AnimatedFullScreenCard";
+import DatasetSelect from "../components/DatasetSelect";
 
 const LearningWrapper = styled.div`
   height: 100%;
@@ -97,6 +98,16 @@ class Learning extends React.Component {
               </TwoPartVerticalChild>
               <TwoPartVerticalChild>
                 <Title>Dataset</Title>
+                <DatasetSelect
+                  onDatasetSelect={(server, datasetId) => {
+                    if (
+                      this.props.datasets.datasets[server.uniqueName][datasetId]
+                        .reduced
+                    ) {
+                      this.props.getDataset(datasetId, server);
+                    }
+                  }}
+                />
               </TwoPartVerticalChild>
             </TwoPartVertical>
           </TwoPartChild>
@@ -130,10 +141,13 @@ export default connect(
     colors: state.colors,
     networks: state.networks,
     servers: state.servers,
+    datasets: state.datasets,
   }),
   (dispatch) => ({
     setLearningParam: (key, value) => dispatch(setLearningParam(key, value)),
     getNetwork: (networkId, server) =>
       fetchNetwork(networkId, server, dispatch),
+    getDataset: (datasetId, server) =>
+      fetchDataset(datasetId, server, dispatch),
   })
 )(Learning);

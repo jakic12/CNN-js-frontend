@@ -51,8 +51,9 @@ class Network extends Component {
         ],
       error: undefined,
       server: this.props.servers.servers.find(
-        server => server.uniqueName === this.props.match.params.serverUniqueName
-      )
+        (server) =>
+          server.uniqueName === this.props.match.params.serverUniqueName
+      ),
     };
 
     this.checkForError = this.checkForError.bind(this);
@@ -131,7 +132,7 @@ class Network extends Component {
       setTimeout(() => {
         this.setState({
           notLoggedIn: false,
-          redirect: true
+          redirect: true,
         });
       }, 3000);
     }
@@ -143,7 +144,7 @@ class Network extends Component {
         {this.state.redirect && (
           <Redirect
             to={{
-              pathname: "/networks"
+              pathname: "/networks",
             }}
           />
         )}
@@ -174,8 +175,9 @@ class Network extends Component {
 }
 
 export default connect(
-  state => state,
-  dispatch => ({
-    getNetwork: (networkId, server) => fetchNetwork(networkId, server, dispatch)
+  (state) => state,
+  (dispatch) => ({
+    getNetwork: (networkId, server) =>
+      fetchNetwork(networkId, server, dispatch),
   })
 )(Network);
