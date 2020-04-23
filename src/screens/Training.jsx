@@ -1,20 +1,21 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { setLearningParam } from "../redux/actions/learning";
+import { setTrainingParam } from "../redux/actions/training";
 import KeyValueTable from "../components/KeyValueTable";
 
 import styled from "styled-components";
 
 import { fetchNetwork } from "../redux/actions/networks";
 import { fetchDataset } from "../redux/actions/datasets";
+import { startTraining } from "../redux/actions/training";
 
 //components
 import SpringButton from "../components/SpringButton";
 import NetworkSelect from "../components/NetworkSelect";
 import DatasetSelect from "../components/DatasetSelect";
 
-const LearningWrapper = styled.div`
+const TrainingWrapper = styled.div`
   height: 100%;
   padding: 1em;
 `;
@@ -62,24 +63,33 @@ const TwoPartVerticalChild = styled.div`
   flex-direction: column;
 `;
 
-const StartLearningButtonWrapper = styled.div`
+const StartTrainingButtonWrapper = styled.div`
   width: calc(100% - 4em);
   margin: 2em;
   margin-top: 0;
 `;
 
-class Learning extends React.Component {
+class Training extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      network: undefined,
-      dataset: undefined,
+      networkId: undefined,
+      datasetId: undefined,
+      datasetServer: undefined,
+      networkServer: undefined,
+      server: undefined,
+      trainingProps: {
+        epochs: 200,
+        batch_size: 1,
+        learningRate: -0.1,
+        decay: 0.005,
+      },
     };
   }
   render() {
     return (
-      <LearningWrapper>
+      <TrainingWrapper>
         <TwoPart>
           <TwoPartChild>
             <TwoPartVertical>
@@ -93,6 +103,11 @@ class Learning extends React.Component {
                     ) {
                       this.props.getNetwork(networkId, server);
                     }
+                    this.setState({
+                      networkId,
+                      networkServer: server,
+                      server,
+                    });
                   }}
                 />
               </TwoPartVerticalChild>
@@ -106,6 +121,7 @@ class Learning extends React.Component {
                     ) {
                       this.props.getDataset(datasetId, server);
                     }
+                    this.setState({ datasetId, datasetServer: server });
                   }}
                 />
               </TwoPartVerticalChild>
@@ -113,41 +129,60 @@ class Learning extends React.Component {
           </TwoPartChild>
           <TwoPartChild>
             <KeyValueTable
-              data={this.props}
-              include={[`batch_size`, `epochs`]}
+              data={this.state.trainingProps}
               editFunction={(key, value) => {
-                this.props.setLearningParam(key, value);
+                this.setState((prev) => ({
+                  trainingProps: Object.assign({}, prev.trainingProps, {
+                    [key]: value,
+                  }),
+                }));
               }}
             ></KeyValueTable>
 
-            <StartLearningButtonWrapper>
+            <StartTrainingButtonWrapper>
               <SpringButton
-                text={`Start learning`}
+                text={`Start Training`}
                 color={this.props.colors.primarycolor}
                 textColor={this.props.colors.primarytextcolor}
-                onClick={() => {}}
+                onClick={() => {
+                  if (this.state.networkId && this.state.datasetId)
+                    if (
+                      this.props.networks.networks[
+                        this.state.networkServer.uniqueName
+                      ][this.state.networkId] &&
+                      this.props.networks.networks[
+                        this.state.networkServer.uniqueName
+                      ][this.state.networkId]
+                    )
+                      this.props.startTraining({
+                        server: this.state.server,
+                        network: this.props.networks.networks[
+                          this.state.networkServer.uniqueName
+                        ][this.state.networkId],
+                        dataset: this.props.datasets.datasets[
+                          this.state.datasetServer.uniqueName
+                        ][this.state.datasetId],
+                        trainingParams: this.state.trainingProps,
+                      });
+                    else console.error("invalid network or dataset");
+                }}
               />
-            </StartLearningButtonWrapper>
+            </StartTrainingButtonWrapper>
           </TwoPartChild>
         </TwoPart>
-      </LearningWrapper>
+      </TrainingWrapper>
     );
   }
 }
 
 export default connect(
-  (state) => ({
-    ...state.learning,
-    colors: state.colors,
-    networks: state.networks,
-    servers: state.servers,
-    datasets: state.datasets,
-  }),
+  (state) => state,
   (dispatch) => ({
-    setLearningParam: (key, value) => dispatch(setLearningParam(key, value)),
     getNetwork: (networkId, server) =>
       fetchNetwork(networkId, server, dispatch),
     getDataset: (datasetId, server) =>
       fetchDataset(datasetId, server, dispatch),
+    startTraining: ({ server, network, dataset, trainingParams }) =>
+      startTraining({ server, network, dataset, trainingParams, dispatch }),
   })
-)(Learning);
+)(Training);

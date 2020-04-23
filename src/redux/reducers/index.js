@@ -5,7 +5,7 @@ import colors from "./colors";
 import structure from "./structure";
 import networks from "./networks";
 import servers from "./servers";
-import learning from "./learning";
+import training from "./training";
 import datasets from "./datasets";
 
 export default combineReducers({
@@ -13,6 +13,6 @@ export default combineReducers({
   structure,
   networks,
   servers,
-  learning,
+  training,
   datasets,
 });

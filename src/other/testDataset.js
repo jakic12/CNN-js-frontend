@@ -7,4 +7,6 @@ export default {
   imageSize: 32,
   colorDepth: 3,
   data: object,
+  vectorize: true,
+  normalizeMax: 255,
 };

@@ -10,7 +10,7 @@ import TopBar from "./TopBar";
 import Dashboard from "../screens/Dashboard";
 import Networks from "../screens/Networks";
 import Network from "../screens/Network";
-import Learning from "../screens/Learning";
+import Training from "../screens/Training";
 import Datasets from "../screens/Datasets";
 
 // router
@@ -53,9 +53,9 @@ const screens = [
     component: Network,
   },
   {
-    path: `/learning`,
-    fullName: `Learning`,
-    component: Learning,
+    path: `/training`,
+    fullName: `Training`,
+    component: Training,
     exact: true,
     icon: MdSchool,
   },

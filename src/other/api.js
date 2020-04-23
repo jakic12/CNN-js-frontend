@@ -48,7 +48,11 @@ export function createNetwork(name, shape, server) {
       neuralNet.id = net_id;
       localStorage.setItem(
         `localNetworks`,
-        JSON.stringify(Object.assign(existing || {}, { [net_id]: neuralNet }))
+        JSON.stringify(
+          Object.assign(existing || {}, {
+            [net_id]: neuralNet,
+          })
+        )
       );
       resolve({ network_id: net_id });
     } else {
