@@ -1,16 +1,18 @@
 import React from "react";
 
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 // components
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
+import TrainingIndicator from "./TrainingIndicator";
 
 // screens
 import Dashboard from "../screens/Dashboard";
 import Networks from "../screens/Networks";
 import Network from "../screens/Network";
 import Training from "../screens/Training";
+import StartTraining from "../screens/StartTraining";
 import Datasets from "../screens/Datasets";
 
 // router
@@ -58,6 +60,12 @@ const screens = [
     component: Training,
     exact: true,
     icon: MdSchool,
+    customRightIcon: <TrainingIndicator />,
+  },
+  {
+    path: `/startTraining`,
+    component: StartTraining,
+    exact: true,
   },
 ];
 

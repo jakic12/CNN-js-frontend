@@ -13,7 +13,11 @@ export default (state = defaultState, action) => {
         [action.server.uniqueName]: Object.assign(
           {},
           state[action.server.uniqueName],
-          { [action.network.id]: {} }
+          {
+            [action.network.id]: {
+              dataset: Object.assign({}, action.dataset, { data: undefined }),
+            },
+          }
         ),
       });
     case STOP_TRAINING:
@@ -35,6 +39,11 @@ export default (state = defaultState, action) => {
               err: action.err,
               accuracy: action.accuracy,
               learningRate: action.learningRate,
+              dataset: Object.assign(
+                {},
+                state[action.server.uniqueName][action.network.id].dataset,
+                { data: undefined }
+              ),
             },
           }
         ),

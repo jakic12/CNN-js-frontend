@@ -65,34 +65,23 @@ export default class TrainingController extends WithEventListener {
   startLearning() {
     if (this.server.url === "local") {
       this.emitEvent("start");
-      try {
-        new Promise((resolve) => {
-          this.network.sgd(
-            Object.assign({}, this.trainingParams, {
-              onProgress: (epoch, accuracy, err, learningRate) => {
-                this.emitEvent(
-                  "batchProgress",
-                  epoch,
-                  accuracy,
-                  err,
-                  learningRate
-                );
-              },
-              onEnd: () => {
-                this.emitEvent("end");
-              },
-              dataset: this.dataset,
-            })
-          );
-          resolve();
-        }).then(() => {});
-      } catch (error) {
-        console.error(error);
-        debugger;
-      }
+      this.trainingInstance = new Worker("/trainingWorker.js");
+      this.trainingInstance.addEventListener("message", (m) => {
+        this.emitEvent(m.data.event, ...m.data.data);
+      });
+      this.trainingInstance.postMessage({
+        network: JSON.stringify(this.network),
+        trainingProps: Object.assign({}, this.trainingParams, {
+          dataset: this.dataset,
+        }),
+      });
     } else {
       console.error("network training not supported yet");
       //TODO: learning over the network
     }
+  }
+
+  terminate() {
+    if (this.trainingInstance) this.trainingInstance.terminate();
   }
 }

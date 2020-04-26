@@ -1,23 +1,87 @@
-import React from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
-
-import { setTrainingParam } from "../redux/actions/training";
-import KeyValueTable from "../components/KeyValueTable";
-
 import styled from "styled-components";
-
-import { fetchNetwork } from "../redux/actions/networks";
-import { fetchDataset } from "../redux/actions/datasets";
-import { startTraining } from "../redux/actions/training";
-
-//components
-import SpringButton from "../components/SpringButton";
-import NetworkSelect from "../components/NetworkSelect";
-import DatasetSelect from "../components/DatasetSelect";
+import { Link } from "react-router-dom";
 
 const TrainingWrapper = styled.div`
-  height: 100%;
+  width: 100%;
   padding: 1em;
+  box-sizing: border-box;
+`;
+
+const TrainingHeader = styled.div`
+  padding: 1em;
+  display: flex;
+  flex-direction: row;
+`;
+
+const Card = styled(Link)`
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: row;
+  background: ${(props) => props.backgroundbyelevation(1)};
+  color: ${(props) => props.textcolor};
+  text-decoration: none;
+
+  &:not(:first-child) {
+    margin-top: 2em;
+  }
+  border-radius: 5px;
+`;
+
+const Column = styled.div`
+  flex: 1 1 0px;
+  padding: 1em;
+  text-align: center;
+`;
+
+const round = (x, n) => parseInt(x * 10 ** n) / 10 ** n;
+
+const TrainingList = connect((state) => state)(({ data, colors, networks }) => {
+  console.log(data, colors);
+  return (
+    <>
+      <TrainingHeader {...colors}>
+        {[`network`, `server`, `learning rate`, `error`, `accuracy`].map(
+          (c, i) => (
+            <Column key={`header_item_${i}`}>{c}</Column>
+          )
+        )}
+      </TrainingHeader>
+      <TrainingWrapper>
+        {data.map((row, i) => (
+          <Card
+            key={`trainingList_${i}_row`}
+            {...colors}
+            to={`/training/${row.server}/${row.network}`}
+          >
+            <Column>{networks.networks[row.server][row.network].name}</Column>
+            <Column>{row.server}</Column>
+            <Column>{round(row.learningRate, 5)}</Column>
+            <Column>{round(row.err, 5)}</Column>
+            <Column>{`${round(row.accuracy, 4) * 100}%`}</Column>
+          </Card>
+        ))}
+      </TrainingWrapper>
+    </>
+  );
+});
+
+const StartButton = styled(Link)`
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  background: ${(props) => props.primarycolor};
+  color: ${(props) => props.primarytextcolor};
+  border: none;
+  text-decoration: none;
+  border-radius: 5px;
+  box-sizing: content-box;
+  padding: 1em;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Title = styled.h1`
@@ -29,160 +93,54 @@ const Title = styled.h1`
   box-sizing: border-box;
 `;
 
-const TwoPart = styled.div`
-  min-height: 100%;
+const TrainingScreenWrapper = styled.div`
+  padding: 1em;
+`;
+
+const TrainingScreenTitleWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
-  @media only screen and (max-width: 900px) {
-    & {
-      flex-direction: column;
-    }
-  }
+  justify-content: space-between;
 `;
 
-const TwoPartChild = styled.div`
-  width: 50%;
-  @media only screen and (max-width: 900px) {
-    & {
-      width: 100%;
-    }
-  }
-`;
-
-const TwoPartVertical = styled.div`
+const FlexCenter = styled.div`
   display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
 `;
 
-const TwoPartVerticalChild = styled.div`
-  height: 50%;
-  display: flex;
-  flex-direction: column;
-`;
-
-const StartTrainingButtonWrapper = styled.div`
-  width: calc(100% - 4em);
-  margin: 2em;
-  margin-top: 0;
-`;
-
-class Training extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      networkId: undefined,
-      datasetId: undefined,
-      datasetServer: undefined,
-      networkServer: undefined,
-      server: undefined,
-      trainingProps: {
-        epochs: 200,
-        batch_size: 1,
-        learningRate: -0.1,
-        decay: 0.005,
-      },
-    };
-  }
+class Training extends Component {
   render() {
     return (
-      <TrainingWrapper>
-        <TwoPart>
-          <TwoPartChild>
-            <TwoPartVertical>
-              <TwoPartVerticalChild>
-                <Title>Network</Title>
-                <NetworkSelect
-                  onNetworkSelect={(server, networkId) => {
-                    if (
-                      this.props.networks.networks[server.uniqueName][networkId]
-                        .reduced
-                    ) {
-                      this.props.getNetwork(networkId, server);
-                    }
-                    this.setState({
-                      networkId,
-                      networkServer: server,
-                      server,
-                    });
-                  }}
-                />
-              </TwoPartVerticalChild>
-              <TwoPartVerticalChild>
-                <Title>Dataset</Title>
-                <DatasetSelect
-                  onDatasetSelect={(server, datasetId) => {
-                    if (
-                      this.props.datasets.datasets[server.uniqueName][datasetId]
-                        .reduced
-                    ) {
-                      this.props.getDataset(datasetId, server);
-                    }
-                    this.setState({ datasetId, datasetServer: server });
-                  }}
-                />
-              </TwoPartVerticalChild>
-            </TwoPartVertical>
-          </TwoPartChild>
-          <TwoPartChild>
-            <KeyValueTable
-              data={this.state.trainingProps}
-              editFunction={(key, value) => {
-                this.setState((prev) => ({
-                  trainingProps: Object.assign({}, prev.trainingProps, {
-                    [key]: value,
-                  }),
-                }));
-              }}
-            ></KeyValueTable>
+      <TrainingScreenWrapper>
+        <TrainingScreenTitleWrapper>
+          <Title>Training</Title>
+          <FlexCenter>
+            <StartButton to={`startTraining`} {...this.props.colors}>
+              train a network
+            </StartButton>
+          </FlexCenter>
+        </TrainingScreenTitleWrapper>
 
-            <StartTrainingButtonWrapper>
-              <SpringButton
-                text={`Start Training`}
-                color={this.props.colors.primarycolor}
-                textColor={this.props.colors.primarytextcolor}
-                onClick={() => {
-                  if (this.state.networkId && this.state.datasetId)
-                    if (
-                      this.props.networks.networks[
-                        this.state.networkServer.uniqueName
-                      ][this.state.networkId] &&
-                      this.props.networks.networks[
-                        this.state.networkServer.uniqueName
-                      ][this.state.networkId]
-                    )
-                      this.props.startTraining({
-                        server: this.state.server,
-                        network: this.props.networks.networks[
-                          this.state.networkServer.uniqueName
-                        ][this.state.networkId],
-                        dataset: this.props.datasets.datasets[
-                          this.state.datasetServer.uniqueName
-                        ][this.state.datasetId],
-                        trainingParams: this.state.trainingProps,
-                      });
-                    else console.error("invalid network or dataset");
-                }}
-              />
-            </StartTrainingButtonWrapper>
-          </TwoPartChild>
-        </TwoPart>
-      </TrainingWrapper>
+        <TrainingList
+          data={Object.keys(this.props.training)
+            .map((i) =>
+              Object.keys(this.props.training[i]).map((j) =>
+                Object.assign({}, this.props.training[i][j], {
+                  server: i,
+                  network: j,
+                })
+              )
+            )
+            .flat(1)}
+        />
+      </TrainingScreenWrapper>
     );
   }
 }
 
-export default connect(
-  (state) => state,
-  (dispatch) => ({
-    getNetwork: (networkId, server) =>
-      fetchNetwork(networkId, server, dispatch),
-    getDataset: (datasetId, server) =>
-      fetchDataset(datasetId, server, dispatch),
-    startTraining: ({ server, network, dataset, trainingParams }) =>
-      startTraining({ server, network, dataset, trainingParams, dispatch }),
-  })
-)(Training);
+export default connect((state) => ({
+  training: state.training,
+  colors: state.colors,
+}))(Training);

@@ -2,7 +2,7 @@ import { SET_STRUCT_PROP } from "../actions/structure";
 
 const defaultState = {
   sidebarwidth: `250px`,
-  topbarheight: `50px`
+  topbarheight: `80px`,
 };
 
 export default (state = defaultState, action) => {
