@@ -5,12 +5,86 @@ import {
 } from "../CNN-js/datasetProcessor";
 const { CNN, NetworkArchitectures } = require("../CNN-js/cnn");
 
-export function getNetworks(server) {
+//init database
+const openDb = () => {
   return new Promise((resolve, reject) => {
+    const promiseDb = window.indexedDB.open("CNNjs-localStore", 1);
+
+    promiseDb.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains("networks")) {
+        db.createObjectStore("networks", { keyPath: "id" });
+      }
+      if (!db.objectStoreNames.contains("datasets")) {
+        db.createObjectStore("datasets", { keyPath: "id" });
+      }
+    };
+
+    promiseDb.onsuccess = (db) => {
+      resolve(promiseDb.result);
+    };
+    promiseDb.onerror = (e) => reject(e);
+  });
+};
+
+const addRecord = (store_name, data) => {
+  return new Promise((resolve, reject) => {
+    openDb().then((db) => {
+      const tx = db
+        .transaction(store_name, "readwrite")
+        .objectStore(store_name)
+        .add(data);
+
+      tx.onsuccess = () => {
+        resolve();
+      };
+      tx.onerror = (e) => {
+        reject(e);
+      };
+    });
+  });
+};
+
+const getRecord = (store_name, id) => {
+  return new Promise((resolve, reject) => {
+    openDb().then((db) => {
+      const tx = db.transaction(store_name).objectStore(store_name).get(id);
+
+      tx.onsuccess = (event) => {
+        resolve(tx.result);
+      };
+      tx.onerror = (e) => {
+        reject(e);
+      };
+    });
+  });
+};
+
+const getAllRecordsAsObject = (store_name, keyProp) => {
+  return new Promise((resolve, reject) => {
+    openDb().then((db) => {
+      const out = {};
+      db
+        .transaction(store_name, "readonly")
+        .objectStore(store_name)
+        .openCursor().onsuccess = function (event) {
+        var cursor = event.target.result;
+        if (cursor) {
+          out[cursor.value[keyProp]] = cursor.value;
+          cursor.continue();
+        } else {
+          resolve(out);
+        }
+      };
+    });
+  });
+};
+
+export function getNetworks(server) {
+  return new Promise(async (resolve, reject) => {
     if (server.url === `local`) {
-      let localExisting = JSON.parse(localStorage.getItem(`localNetworks`));
+      let localExisting = await getAllRecordsAsObject(`networks`, `id`);
       if (!localExisting) {
-        localStorage.setItem(`localNetworks`, `{}`);
         localExisting = {};
       }
 
@@ -44,20 +118,15 @@ export function getNetworks(server) {
 export function createNetwork(name, shape, server) {
   return new Promise((resolve, reject) => {
     if (server.url === `local`) {
-      const existing = JSON.parse(localStorage.getItem(`localNetworks`));
       const neuralNet = new CNN(shape || NetworkArchitectures.LeNet5);
       const net_id = new Date().getTime();
       neuralNet.name = name || net_id;
       neuralNet.id = net_id;
-      localStorage.setItem(
-        `localNetworks`,
-        JSON.stringify(
-          Object.assign(existing || {}, {
-            [net_id]: neuralNet,
-          })
-        )
-      );
-      resolve({ network_id: net_id });
+      addRecord("networks", JSON.parse(JSON.stringify(neuralNet)))
+        .then(() => {
+          resolve();
+        })
+        .catch((e) => reject(e));
     } else {
       fetch(
         `${server.url}/createCnn?name=${name}&shape=${JSON.stringify(shape)}`,
@@ -81,17 +150,21 @@ export function createNetwork(name, shape, server) {
 export function getNetwork(id, server) {
   return new Promise((resolve, reject) => {
     if (server.url === `local`) {
-      const existing = JSON.parse(localStorage.getItem(`localNetworks`));
-      if (existing[id]) {
-        resolve(
-          Object.assign(new CNN(existing[id]), {
-            name: existing[id].name,
-            id: existing[id].id,
-          })
-        );
-      } else {
-        reject(`Network doesn't exist`);
-      }
+      getRecord(`networks`, parseInt(id))
+        .then((saved) => {
+          console.log(saved);
+          if (saved) {
+            resolve(
+              Object.assign(new CNN(saved), {
+                name: saved.name,
+                id: saved.id,
+              })
+            );
+          } else {
+            reject(`Network doesn't exist`);
+          }
+        })
+        .catch(() => reject(`Local database error`));
     } else {
       fetch(`${server.url}/getNetwork/${id}`, {
         headers: {
@@ -132,23 +205,23 @@ export function login(user, pass, server) {
 export function getDatasets(server) {
   return new Promise((resolve, reject) => {
     if (server.url === `local`) {
-      let localExisting = JSON.parse(localStorage.getItem(`localDatasets`));
-      if (!localExisting) {
-        /*localStorage.setItem(
-          `localDatasets`,
-          JSON.stringify({ testDataset: testDataset })
-        );*/
-        localExisting = { testDataset: testDataset };
-      }
+      getAllRecordsAsObject(`datasets`, `id`)
+        .then((localExisting) => {
+          if (!localExisting) {
+            localExisting = { testDataset: testDataset };
+          }
 
-      Object.keys(localExisting).forEach((id) => {
-        console.log(localExisting[id].data.length);
-        if (typeof localExisting[id].data === "string") {
-          localExisting[id].data = stringToUint8Array(localExisting[id].data);
-        }
-        localExisting[id].full = true;
-      });
-      resolve(localExisting);
+          Object.keys(localExisting).forEach((id) => {
+            if (typeof localExisting[id].data === "string") {
+              localExisting[id].data = stringToUint8Array(
+                localExisting[id].data
+              );
+            }
+            localExisting[id].full = true;
+          });
+          resolve(localExisting);
+        })
+        .catch((e) => reject(e));
     } else {
       fetch(`${server.url}/getDatasets`, {
         method: `GET`,
@@ -170,12 +243,11 @@ export function getDatasets(server) {
 export function getDataset(id, server) {
   return new Promise((resolve, reject) => {
     if (server.url === `local`) {
-      const existing = JSON.parse(localStorage.getItem(`localDatasets`));
-      if (existing[id]) {
-        resolve(existing[id]);
-      } else {
-        reject(`Dataset doesn't exist`);
-      }
+      getRecord(`datasets`, id)
+        .then((dataset) => {
+          resolve(dataset);
+        })
+        .catch((e) => reject(e));
     } else {
       fetch(`${server.url}/getDataset/${id}`, {
         headers: {
@@ -195,7 +267,7 @@ export function getDataset(id, server) {
 export function newDataset(dataset, server) {
   return new Promise((resolve, reject) => {
     if (server.url === `local`) {
-      const existing = JSON.parse(localStorage.getItem(`localDatasets`)) || {
+      /*const existing = JSON.parse(localStorage.getItem(`localDatasets`)) || {
         testDataset: testDataset,
       };
 
@@ -206,14 +278,14 @@ export function newDataset(dataset, server) {
             data: uint8ArrayToString(
               new Uint8Array(
                 existing[id].data
-              ) /*.subarray(
-                0,
-                100 *
-                  (existing[id].imageSize *
-                    existing[id].imageSize *
-                    existing[id].colorDepth +
-                    1)
-              )*/
+              ) //.subarray(
+                //0,
+                //100 *
+                //  (existing[id].imageSize *
+                //    existing[id].imageSize *
+                //    existing[id].colorDepth +
+                //    1)
+              //)
             ),
           });
         }
@@ -223,8 +295,10 @@ export function newDataset(dataset, server) {
         localStorage.setItem(`localDatasets`, JSON.stringify(toSave));
       } catch (e) {
         resolve();
-      }
-      resolve();
+      }*/
+      addRecord(`datasets`, dataset)
+        .then(() => resolve())
+        .catch((e) => reject(e));
     } else {
       //TODO: newDataset on server
     }

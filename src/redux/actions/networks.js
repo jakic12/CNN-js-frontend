@@ -14,75 +14,78 @@ export const FETCH_NETWORK_SUCCESS = `FETCH_NETWORK_SUCCESS`;
 export const FETCH_NETWORK_ERROR = `FETCH_NETWORK_ERROR`;
 
 export const newNetworkRequest = () => ({
-  type: NEW_NETWORK_REQUEST
+  type: NEW_NETWORK_REQUEST,
 });
 export const newNetworksSuccess = () => ({
-  type: NEW_NETWORK_SUCCESS
+  type: NEW_NETWORK_SUCCESS,
 });
 export const newNetworkError = ({ error }) => ({
   type: NEW_NETWORK_ERROR,
-  error
+  error,
 });
 
 export const requestNetworks = ({ server }) => ({
   type: FETCH_NETWORKS_REQUEST,
-  server
+  server,
 });
 export const networksSuccess = ({ networks, server }) => ({
   type: FETCH_NETWORKS_SUCCESS,
   networks,
-  server
+  server,
 });
 export const networksError = ({ err, server }) => ({
   type: FETCH_NETWORKS_ERROR,
   error: err,
-  server
+  server,
 });
 
 export const unloadNetworks = ({ server }) => ({
   type: UNLOAD_NETWORKS,
-  server
+  server,
 });
 
 export const requestNetwork = ({ server, networkId }) => ({
   type: FETCH_NETWORK_REQUEST,
   networkId: networkId,
-  server
+  server,
 });
 export const networkSuccess = ({ server, network }) => ({
   type: FETCH_NETWORK_SUCCESS,
   network,
   networkId: network.id,
-  server
+  server,
 });
 export const networkError = ({ server, networkId, err }) => ({
   type: FETCH_NETWORK_ERROR,
   error: err,
   networkId: networkId,
-  server
+  server,
 });
 
 export const fetchNetworks = (server, dispatch) => {
   dispatch(requestNetworks({ server }));
   getNetworks(server)
-    .then(networks => {
-      Object.keys(networks).forEach(n => (networks[n].reduced = true));
+    .then((networks) => {
+      Object.keys(networks).forEach((n) => (networks[n].reduced = true));
       dispatch(networksSuccess({ networks, server }));
     })
-    .catch(err => dispatch(networksError({ err, server })));
+    .catch((err) => dispatch(networksError({ err, server })));
 };
 
 export const newNetwork = (name, shape, server, dispatch) => {
   dispatch(newNetworkRequest());
   createNetwork(name, shape, server)
     .then(() => {
+      console.log(`complete`);
       fetchNetworks(server, dispatch)
-        .then(() => dispatch(newNetworksSuccess()))
-        .catch(err => {
+        .then(() => {
+          dispatch(newNetworksSuccess());
+        })
+        .catch((err) => {
           throw err;
         });
     })
-    .catch(err => {
+    .catch((err) => {
       dispatch(newNetworkError({ error: err }));
     });
 };
@@ -90,10 +93,10 @@ export const newNetwork = (name, shape, server, dispatch) => {
 export const fetchNetwork = (networkId, server, dispatch) => {
   dispatch(requestNetwork({ server, networkId }));
   getNetwork(networkId, server)
-    .then(net => {
+    .then((net) => {
       dispatch(networkSuccess({ server, network: net }));
     })
-    .catch(err => {
+    .catch((err) => {
       dispatch(networkError({ server, networkId, err }));
     });
 };
