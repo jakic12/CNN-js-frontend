@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/CNN-js-frontend/static/css/main.5ecd60fb.chunk.css",
-    "main.js": "/CNN-js-frontend/static/js/main.70e67f27.chunk.js",
-    "main.js.map": "/CNN-js-frontend/static/js/main.70e67f27.chunk.js.map",
+    "main.js": "/CNN-js-frontend/static/js/main.6ece2cf5.chunk.js",
+    "main.js.map": "/CNN-js-frontend/static/js/main.6ece2cf5.chunk.js.map",
     "runtime-main.js": "/CNN-js-frontend/static/js/runtime-main.91b1ad7a.js",
     "runtime-main.js.map": "/CNN-js-frontend/static/js/runtime-main.91b1ad7a.js.map",
     "static/js/2.b46940d1.chunk.js": "/CNN-js-frontend/static/js/2.b46940d1.chunk.js",
     "static/js/2.b46940d1.chunk.js.map": "/CNN-js-frontend/static/js/2.b46940d1.chunk.js.map",
     "index.html": "/CNN-js-frontend/index.html",
-    "precache-manifest.10048913d9e98e699ca0c08b78aba53a.js": "/CNN-js-frontend/precache-manifest.10048913d9e98e699ca0c08b78aba53a.js",
+    "precache-manifest.6deb3f582f9cd79fefdf9b9a8c5e0ef3.js": "/CNN-js-frontend/precache-manifest.6deb3f582f9cd79fefdf9b9a8c5e0ef3.js",
     "service-worker.js": "/CNN-js-frontend/service-worker.js",
     "static/css/main.5ecd60fb.chunk.css.map": "/CNN-js-frontend/static/css/main.5ecd60fb.chunk.css.map",
     "static/js/2.b46940d1.chunk.js.LICENSE.txt": "/CNN-js-frontend/static/js/2.b46940d1.chunk.js.LICENSE.txt",
@@ -19,6 +19,6 @@
     "static/js/runtime-main.91b1ad7a.js",
     "static/js/2.b46940d1.chunk.js",
     "static/css/main.5ecd60fb.chunk.css",
-    "static/js/main.70e67f27.chunk.js"
+    "static/js/main.6ece2cf5.chunk.js"
   ]
 }
