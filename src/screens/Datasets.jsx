@@ -5,6 +5,7 @@ import { NetworkCardParent } from "../components/NetworkCard";
 import Error, { translateError } from "../components/Error";
 import ServerLogin from "../components/ServerLogin";
 import DatasetCard, { AddDatasetCard } from "../components/DatasetCard";
+import { PropagateLoader } from "react-spinners";
 
 class Datasets extends React.Component {
   constructor(props) {
@@ -26,7 +27,9 @@ class Datasets extends React.Component {
             key={`dataset_parent${server.uniqueName}`}
           >
             {this.props.datasets.serverDatasetsLoading[server.uniqueName] && (
-              <div>loading</div>
+              <div style={{ width: `100%`, heigh: `100%` }}>
+                <PropagateLoader />
+              </div>
             )}
             {this.props.datasets.serverDatasetsError[server.uniqueName] &&
               this.props.datasets.serverDatasetsError[server.uniqueName] !==
@@ -40,7 +43,8 @@ class Datasets extends React.Component {
               )}
             {this.props.datasets.serverDatasetsError[server.uniqueName] ===
               `Unauthorized` && <ServerLogin server={server} />}
-            {!this.props.datasets.serverDatasetsError[server.uniqueName] &&
+            {!this.props.datasets.serverDatasetsLoading[server.uniqueName] &&
+              !this.props.datasets.serverDatasetsError[server.uniqueName] &&
               this.props.datasets.datasets[server.uniqueName] && (
                 <>
                   {Object.keys(

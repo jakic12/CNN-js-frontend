@@ -7,29 +7,30 @@ import { fetchNetworks, newNetwork } from "../redux/actions/networks";
 // components
 import NetworkCard, {
   NetworkCardParent,
-  AddNetworkCard
+  AddNetworkCard,
 } from "../components/NetworkCard";
 import ServerLogin from "../components/ServerLogin";
 import Error, { translateError } from "../components/Error";
 
 import { NetworkArchitectures } from "../CNN-js/cnn";
+import { PropagateLoader } from "react-spinners";
 
 class Networks extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      networkGroupsSmall: false
+      networkGroupsSmall: false,
     };
   }
 
   componentWillMount() {
-    this.props.servers.servers.map(server => {
+    this.props.servers.servers.map((server) => {
       this.props.getNetworks(server);
     });
   }
   componentWillUpdate() {
-    this.props.servers.servers.map(server => {
+    this.props.servers.servers.map((server) => {
       if (
         !this.props.networks.networks[server.uniqueName] &&
         !this.props.networks.isLoading[server.uniqueName] &&
@@ -42,7 +43,7 @@ class Networks extends Component {
   render() {
     return (
       <div>
-        {this.props.servers.servers.map(server => {
+        {this.props.servers.servers.map((server) => {
           return (
             <NetworkCardParent
               title={server.uniqueName}
@@ -55,7 +56,7 @@ class Networks extends Component {
                   <>
                     {Object.keys(
                       this.props.networks.networks[server.uniqueName]
-                    ).map(id => {
+                    ).map((id) => {
                       return (
                         <NetworkCard
                           network={
@@ -75,7 +76,9 @@ class Networks extends Component {
                 )}
 
               {this.props.networks.isLoading[server.uniqueName] && (
-                <div>loading</div>
+                <div>
+                  <PropagateLoader />
+                </div>
               )}
               {this.props.networks.error[server.uniqueName] &&
                 this.props.networks.error[server.uniqueName] !==
@@ -100,10 +103,10 @@ class Networks extends Component {
 }
 
 export default connect(
-  state => state,
-  dispatch => ({
-    getNetworks: server => fetchNetworks(server, dispatch),
+  (state) => state,
+  (dispatch) => ({
+    getNetworks: (server) => fetchNetworks(server, dispatch),
     createNewNetwork: (name, shape, server) =>
-      newNetwork(name, shape, server, dispatch)
+      newNetwork(name, shape, server, dispatch),
   })
 )(Networks);

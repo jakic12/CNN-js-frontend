@@ -125,7 +125,7 @@ class Training extends Component {
     return (
       <TrainingScreenWrapper>
         <TrainingScreenTitleWrapper>
-          <Title>Training</Title>
+          <Title>Currently training</Title>
           <FlexCenter>
             <StartButton to={`startTraining`} {...this.props.colors}>
               train a network
