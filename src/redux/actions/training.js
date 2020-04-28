@@ -1,4 +1,5 @@
 import TrainingController from "../../other/TrainingController";
+import { setNetwork } from "./networks";
 
 export const START_TRAINING = "START_TRAINING";
 export const STOP_TRAINING = "STOP_TRAINING";
@@ -79,7 +80,16 @@ export const startTraining = ({
   });
   trainingInstance.addEventListener(
     "batchProgress",
-    (epoch, accuracy, err, learningRate) => {
+    (epoch, accuracy, err, learningRate, trainedNetwork) => {
+      setNetwork(
+        server,
+        Object.assign(JSON.parse(trainedNetwork), {
+          name: network.name,
+          id: network.id,
+        }),
+        dispatch,
+        false
+      );
       dispatch(
         trainingProgress({
           epoch,

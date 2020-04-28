@@ -338,10 +338,34 @@ const NetworkCards = styled.div`
     `}
 `;
 
-export const NetworkCardParent = ({ children, title, small }) => (
+const NetworkScreenTitleWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const FlexCenter = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const NetworkCardParent = ({
+  children,
+  title,
+  small,
+  customRightButton,
+}) => (
   <NetworkCardParentWrapper small={small}>
     <div>
-      <Title cardMode={small}>{title}</Title>
+      {!customRightButton && <Title cardMode={small}>{title}</Title>}
+      {customRightButton && (
+        <NetworkScreenTitleWrapper>
+          <Title cardMode={small}>{title}</Title>
+          <FlexCenter>{customRightButton}</FlexCenter>
+        </NetworkScreenTitleWrapper>
+      )}
     </div>
     <NetworkCards small={small}>{children}</NetworkCards>
   </NetworkCardParentWrapper>

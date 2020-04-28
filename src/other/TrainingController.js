@@ -67,7 +67,7 @@ export default class TrainingController extends WithEventListener {
       this.emitEvent("start");
       this.trainingInstance = new Worker("/trainingWorker.js");
       this.trainingInstance.addEventListener("message", (m) => {
-        this.emitEvent(m.data.event, ...m.data.data);
+        this.emitEvent(m.data.event, ...[...m.data.data, m.data.network]);
       });
       this.trainingInstance.postMessage({
         network: JSON.stringify(this.network),

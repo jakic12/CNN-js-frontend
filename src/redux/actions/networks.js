@@ -1,4 +1,9 @@
-import { getNetworks, createNetwork, getNetwork } from "../../other/api";
+import {
+  getNetworks,
+  createNetwork,
+  getNetwork,
+  setNetwork as setNetworkApi,
+} from "../../other/api";
 
 export const FETCH_NETWORKS_REQUEST = `FETCH_NETWORKS_REQUEST`;
 export const FETCH_NETWORKS_SUCCESS = `FETCH_NETWORKS_SUCCESS`;
@@ -12,6 +17,29 @@ export const NEW_NETWORK_ERROR = `NEW_NETWORK_ERROR`;
 export const FETCH_NETWORK_REQUEST = `FETCH_NETWORK_REQUEST`;
 export const FETCH_NETWORK_SUCCESS = `FETCH_NETWORK_SUCCESS`;
 export const FETCH_NETWORK_ERROR = `FETCH_NETWORK_ERROR`;
+
+export const SET_NETWORK_REQUEST = `SET_NETWORK_REQUEST`;
+export const SET_NETWORK_SUCCESS = `SET_NETWORK_SUCCESS`;
+export const SET_NETWORK_ERROR = `SET_NETWORK_ERROR`;
+
+export const setNetworkRequest = ({ server, network }) => ({
+  type: SET_NETWORK_REQUEST,
+  server,
+  network,
+});
+
+export const setNetworkSuccess = ({ server, network }) => ({
+  type: SET_NETWORK_SUCCESS,
+  server,
+  network,
+});
+
+export const setNetworkError = ({ server, network, err }) => ({
+  type: SET_NETWORK_ERROR,
+  server,
+  network,
+  err,
+});
 
 export const newNetworkRequest = () => ({
   type: NEW_NETWORK_REQUEST,
@@ -99,4 +127,19 @@ export const fetchNetwork = (networkId, server, dispatch) => {
     .catch((err) => {
       dispatch(networkError({ server, networkId, err }));
     });
+};
+
+export const setNetwork = (
+  server,
+  network,
+  dispatch,
+  fetchNetworksAfter = true
+) => {
+  dispatch(setNetworkRequest({ server, network }));
+  setNetworkApi(network, server)
+    .then(() => {
+      if (fetchNetworksAfter) fetchNetworks(server, dispatch);
+      dispatch(setNetworkSuccess({ server, network }));
+    })
+    .catch((err) => dispatch(setNetworkError({ server, network, err })));
 };

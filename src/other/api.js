@@ -33,7 +33,7 @@ const addRecord = (store_name, data) => {
       const tx = db
         .transaction(store_name, "readwrite")
         .objectStore(store_name)
-        .add(data);
+        .put(data);
 
       tx.onsuccess = () => {
         resolve();
@@ -267,36 +267,19 @@ export function getDataset(id, server) {
 export function newDataset(dataset, server) {
   return new Promise((resolve, reject) => {
     if (server.url === `local`) {
-      /*const existing = JSON.parse(localStorage.getItem(`localDatasets`)) || {
-        testDataset: testDataset,
-      };
-
-      existing[dataset.id] = dataset;
-      const toSave = Object.keys(existing).map((id) => {
-        if (typeof existing[id].data === "object") {
-          return Object.assign({}, existing[id], {
-            data: uint8ArrayToString(
-              new Uint8Array(
-                existing[id].data
-              ) //.subarray(
-                //0,
-                //100 *
-                //  (existing[id].imageSize *
-                //    existing[id].imageSize *
-                //    existing[id].colorDepth +
-                //    1)
-              //)
-            ),
-          });
-        }
-        return existing[id];
-      });
-      try {
-        localStorage.setItem(`localDatasets`, JSON.stringify(toSave));
-      } catch (e) {
-        resolve();
-      }*/
       addRecord(`datasets`, dataset)
+        .then(() => resolve())
+        .catch((e) => reject(e));
+    } else {
+      //TODO: newDataset on server
+    }
+  });
+}
+
+export function setNetwork(network, server) {
+  return new Promise((resolve, reject) => {
+    if (server.url === `local`) {
+      addRecord(`networks`, network)
         .then(() => resolve())
         .catch((e) => reject(e));
     } else {

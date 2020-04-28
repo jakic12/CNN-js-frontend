@@ -11,16 +11,18 @@ import styled from "styled-components";
 import Error from "../components/Error";
 import KeyValueTable from "../components/KeyValueTable";
 
-//redux actions
+// redux actions
 import { fetchNetwork } from "../redux/actions/networks";
+
+// utils
+import { exportText } from "../other/utils";
 
 const NetworkWrapper = styled.div`
   padding: 20px;
-  padding-top: 0;
   box-sizing: border-box;
 `;
 
-const Title = styled.h3`
+const Title = styled.h2`
   margin: 0.5em;
   margin-left: 0;
   margin-right: 0;
@@ -29,13 +31,42 @@ const Title = styled.h3`
   box-sizing: border-box;
 `;
 
-const Subtitle = styled.h2`
+const Subtitle = styled.h3`
   margin: 0.5em;
   margin-left: 0;
   margin-right: 0;
 
   box-shadow: 0;
   box-sizing: border-box;
+`;
+
+const NetworkScreenTitleWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const FlexCenter = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const DownloadButton = styled.div`
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  background: ${(props) => props.primarycolor};
+  color: ${(props) => props.primarytextcolor};
+  border: none;
+  text-decoration: none;
+  border-radius: 5px;
+  box-sizing: content-box;
+  padding: 1em;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 class Network extends Component {
@@ -150,7 +181,22 @@ class Network extends Component {
         )}
         {this.state.network && (
           <>
-            <Title>{this.state.network.name}</Title>
+            <NetworkScreenTitleWrapper>
+              <Title>{this.state.network.name}</Title>
+              <FlexCenter>
+                <DownloadButton
+                  onClick={() => {
+                    exportText(
+                      JSON.stringify(this.state.network),
+                      this.state.network.name.replace(` `, `_`) + `.cnn`
+                    );
+                  }}
+                  {...this.props.colors}
+                >
+                  Export
+                </DownloadButton>
+              </FlexCenter>
+            </NetworkScreenTitleWrapper>
             <NetworkShapeVisual network={this.state.network} />
             <Subtitle>Parameters</Subtitle>
             <KeyValueTable
