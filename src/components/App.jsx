@@ -14,6 +14,7 @@ import Network from "../screens/Network";
 import Training from "../screens/Training";
 import StartTraining from "../screens/StartTraining";
 import Datasets from "../screens/Datasets";
+import TrainingProgress from "../screens/TrainingProgress";
 
 // router
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
@@ -61,6 +62,10 @@ const screens = [
     exact: true,
     icon: MdSchool,
     customRightIcon: <TrainingIndicator />,
+  },
+  {
+    path: `/training/:serverUniqueName/:networkId`,
+    component: TrainingProgress,
   },
   {
     path: `/startTraining`,

@@ -9,8 +9,13 @@ import { Link } from "react-router-dom";
 
 //res
 import { MdPhotoLibrary } from "react-icons/md";
+import { AiOutlineUpload } from "react-icons/ai";
 
 import { openDatasetFromBuffer } from "../CNN-js/datasetProcessor";
+import AnimatedFullScreenCard from "./AnimatedFullScreenCard";
+
+import Dropzone from "react-dropzone";
+import { newDataset } from "../redux/actions/datasets";
 
 const cardWrapperCss = css`
   width: 13em;
@@ -21,14 +26,9 @@ const cardWrapperCss = css`
   margin: 0.7em;
   flex-grow: 0;
   flex-shrink: 0;
-
-  transform: scale(1);
-  transition: transform 0.5s;
-
   &:hover {
-    transform: scale(1.1);
+    cursor: pointer;
   }
-
   background: ${(props) => props.backgroundbyelevation(1)};
   text-decoration: none;
   color: ${(props) => props.accenttextcolor};
@@ -37,6 +37,13 @@ const cardWrapperCss = css`
 
 const CardWrapper = styled(Link)`
   ${cardWrapperCss}
+  transform: scale(1);
+  transition: transform 0.5s;
+
+  &:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+  }
 `;
 
 const CardWrapperNoLink = styled.div`
@@ -69,7 +76,7 @@ const BottomWrapper = styled.div`
   border-bottom-left-radius: 5px;
 `;
 
-const DatasetTitle = styled.h2`
+const DatasetTitle = styled.h4`
   height: 100%;
   width: 100%;
   text-align: center;
@@ -85,9 +92,7 @@ const DatasetTitle = styled.h2`
 export default connect((state) => state)(
   ({ colors, dataset, serverId, onClick, getRef }) => {
     const Wrapper = onClick ? CardWrapperNoLink : CardWrapper;
-    console.log(
-      openDatasetFromBuffer(dataset.data, dataset.colorDepth, dataset.imageSize)
-    );
+
     return (
       <Wrapper
         to={onClick ? "" : `/dataset/${serverId}/${dataset.id}`}
@@ -111,3 +116,203 @@ export default connect((state) => state)(
     );
   }
 );
+
+const AddDatasetWrapper = styled.div`
+  ${cardWrapperCss}
+  border:2px ${(props) => props.color} dashed;
+  display:flex;
+  justify-content:center;
+  flex-direction:row;
+  align-items:center;
+  background:${(props) => props.backgroundbyelevation(1)};
+  box-sizing:border-box;
+  font-size: 1em;
+`;
+
+const InnerDatasetSelect = styled.div`
+  border-radius: 5px;
+  padding: 1em;
+  overflow: hidden;
+`;
+
+const Title = styled.h3`
+  margin: 0.5em;
+  margin-left: 0;
+  margin-right: 0;
+
+  box-shadow: 0;
+  box-sizing: border-box;
+`;
+
+const FileSelect = styled.div`
+  padding: 1em;
+  border-radius: 5px;
+  margin-top: 1em;
+  border: 1px solid gray;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const ConfirmButton = styled.div`
+  background: ${(props) => props.primarycolor};
+  color: ${(props) => props.primarytextcolor};
+  padding: 1em;
+  border-radius: 5px;
+  margin-top: 1em;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const ParameterRow = styled.div`
+  margin-top: 1em;
+  display: flex;
+  flex-direction: row;
+`;
+
+const ParameterName = styled.div`
+  padding: 1em;
+`;
+
+const ParameterInput = styled.input`
+  border: none;
+  background: none;
+  border-bottom: 1px solid black;
+  text-align: center;
+`;
+
+export const AddDatasetCard = connect(
+  (state) => state,
+  (dispatch) => ({
+    newDatasetConnected: (dataset, server) =>
+      newDataset(dataset, server, dispatch),
+  })
+)(({ colors, server, newDatasetConnected }) => {
+  const [open, setOpen] = React.useState(false);
+  const [wrapperRef, setWrapperRef] = React.useState();
+  const [rawDataset, setRawDataset] = React.useState();
+  const [fileName, setFileName] = React.useState();
+
+  const [imageSize, setImageSize] = React.useState(32);
+  const [colorDepth, setColorDepth] = React.useState(3);
+  const [normalizeMax, setNormalizeMax] = React.useState(255);
+  const [crop, setCrop] = React.useState(`no`);
+  const [name, setName] = React.useState();
+  return (
+    <>
+      <AddDatasetWrapper
+        color={colors.primaryColor}
+        backgroundbyelevation={colors.backgroundbyelevation}
+        ref={(r) => setWrapperRef(r)}
+        onClick={() => setOpen(true)}
+      >
+        <AiOutlineUpload color={colors.primaryColor} size={25} />
+      </AddDatasetWrapper>
+      {open && (
+        <AnimatedFullScreenCard
+          startFromElement={wrapperRef}
+          fullscreen={true}
+          onCloseCallback={() => setOpen(false)}
+          contentFunction={(close) => (
+            <InnerDatasetSelect {...colors}>
+              <Title>Upload dataset file</Title>
+              <Dropzone
+                onDrop={(acceptedFiles) => {
+                  acceptedFiles.forEach((file) => {
+                    setFileName(file.name);
+                    setName(file.name.split(".")[0]);
+                    const reader = new FileReader();
+
+                    reader.onabort = () =>
+                      console.log("file reading was aborted");
+                    reader.onerror = () =>
+                      console.log("file reading has failed");
+                    reader.onload = () => {
+                      const binaryStr = reader.result;
+                      setRawDataset(new Uint8Array(binaryStr));
+                    };
+                    reader.readAsArrayBuffer(file);
+                  });
+                }}
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <section>
+                    <div {...getRootProps()}>
+                      <input {...getInputProps()} />
+                      <FileSelect>
+                        {fileName ||
+                          `Drag 'n' drop some file here, or click to select files`}
+                      </FileSelect>
+                    </div>
+                  </section>
+                )}
+              </Dropzone>
+              <ParameterRow>
+                <ParameterName>dataset name</ParameterName>
+                <ParameterInput
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </ParameterRow>
+              <ParameterRow>
+                <ParameterName>image size</ParameterName>
+                <ParameterInput
+                  value={imageSize}
+                  onChange={(e) => setImageSize(e.target.value)}
+                />
+              </ParameterRow>
+              <ParameterRow>
+                <ParameterName>color depth</ParameterName>
+                <ParameterInput
+                  value={colorDepth}
+                  onChange={(e) => setColorDepth(e.target.value)}
+                />
+              </ParameterRow>
+              <ParameterRow>
+                <ParameterName>normalize max</ParameterName>
+                <ParameterInput
+                  value={normalizeMax}
+                  onChange={(e) => setNormalizeMax(e.target.value)}
+                />
+              </ParameterRow>
+              <ParameterRow>
+                <ParameterName>crop dataset</ParameterName>
+                <ParameterInput
+                  value={crop}
+                  onChange={(e) => setCrop(e.target.value)}
+                />
+              </ParameterRow>
+              <ConfirmButton
+                {...colors}
+                onClick={() => {
+                  newDatasetConnected(
+                    {
+                      id: `d` + new Date().getTime(),
+                      name,
+                      imageSize,
+                      colorDepth,
+                      data:
+                        crop === `no`
+                          ? rawDataset
+                          : rawDataset.subarray(
+                              0,
+                              crop * (imageSize * imageSize * colorDepth + 1)
+                            ),
+                      vectorize: true,
+                      normalizeMax,
+                    },
+                    server
+                  );
+                  close();
+                }}
+              >
+                Confirm
+              </ConfirmButton>
+            </InnerDatasetSelect>
+          )}
+        />
+      )}
+    </>
+  );
+});

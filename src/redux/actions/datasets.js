@@ -1,4 +1,8 @@
-import { getDatasets, getDataset } from "../../other/api";
+import {
+  getDatasets,
+  getDataset,
+  newDataset as apiNewDataset,
+} from "../../other/api";
 
 export const FETCH_REDUCED_DATASETS_REQUEST = `FETCH_REDUCED_DATASETS_REQUEST`;
 export const FETCH_REDUCED_DATASETS_SUCCESS = `FETCH_REDUCED_DATASETS_SUCCESS`;
@@ -102,4 +106,11 @@ export const fetchDataset = (datasetId, server, dispatch) => {
       }
       dispatch(datasetError({ err, datasetId, server }));
     });
+};
+
+export const newDataset = (dataset, server, dispatch) => {
+  dispatch(requestNewDataset({ dataset, server }));
+  apiNewDataset(dataset, server).then(() => {
+    dispatch(newDatasetSuccess({ dataset, server }));
+  });
 };

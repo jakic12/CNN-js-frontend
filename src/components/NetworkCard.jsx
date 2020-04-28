@@ -25,11 +25,12 @@ const cardWrapperCss = css`
 
   &:hover {
     transform: scale(1.1);
+    cursor: pointer;
   }
 
-  background: ${props => props.backgroundbyelevation(1)};
+  background: ${(props) => props.backgroundbyelevation(1)};
   text-decoration: none;
-  color: ${props => props.accenttextcolor};
+  color: ${(props) => props.accenttextcolor};
   display: block;
 `;
 
@@ -52,7 +53,7 @@ const BottomWrapper = styled.div`
   border-bottom-left-radius: 5px;
 `;
 
-const NetworkTitle = styled.h2`
+const NetworkTitle = styled.h4`
   height: 100%;
   width: 100%;
   text-align: center;
@@ -79,7 +80,7 @@ const NetworkImageDiv = styled.div`
   flex-direction: row;
 `;
 
-export default connect(state => state)(
+export default connect((state) => state)(
   ({ colors, network, server, draggable, onClick, getRef }) => {
     /*
     // draggable too buggy
@@ -96,7 +97,7 @@ export default connect(state => state)(
         to={onClick ? "" : `/networks/${server}/${network.id}`}
         onClick={onClick}
         {...colors}
-        ref={getRef && (ref => getRef(ref))}
+        ref={getRef && ((ref) => getRef(ref))}
         /*
         // draggable too buggy
         
@@ -168,12 +169,12 @@ export default connect(state => state)(
 
 const AddNetworkWrapper = styled.div`
   ${cardWrapperCss}
-  border:2px ${props => props.color} dashed;
+  border:2px ${(props) => props.color} dashed;
   display:flex;
   justify-content:center;
   flex-direction:row;
   align-items:center;
-  background:${props => props.backgroundbyelevation(1)};
+  background:${(props) => props.backgroundbyelevation(1)};
   box-sizing:border-box;
   font-size: 1em;
   position:relative;
@@ -182,7 +183,7 @@ const AddNetworkWrapper = styled.div`
     cursor:pointer;
   } */
 
-  ${props =>
+  ${(props) =>
     props.nohover &&
     css`
       &:hover {
@@ -223,7 +224,7 @@ const StyledInput = styled.input`
   margin: 1em;
 `;
 
-export const AddNetworkCard = connect(state => state)(
+export const AddNetworkCard = connect((state) => state)(
   ({ colors, onclick, networks }) => {
     const [name, setName] = useState(``);
     const [networkShapeIndex, setNetworkShapeIndex] = useState(0);
@@ -238,7 +239,7 @@ export const AddNetworkCard = connect(state => state)(
       >
         {show && (
           <StyledForm
-            onSubmit={e => {
+            onSubmit={(e) => {
               e.preventDefault();
               if (name) {
                 onclick(
@@ -255,11 +256,11 @@ export const AddNetworkCard = connect(state => state)(
             <StyledInput
               type="text"
               value={name}
-              onChange={evt => setName(evt.target.value)}
+              onChange={(evt) => setName(evt.target.value)}
               placeholder={`Network name`}
             />
             <select
-              onChange={e => setNetworkShapeIndex(JSON.parse(e.target.value))}
+              onChange={(e) => setNetworkShapeIndex(JSON.parse(e.target.value))}
               value={networkShapeIndex}
             >
               {Object.keys(networks.networkArchitectures).map((name, i) => {
@@ -285,14 +286,14 @@ const NetworkCardParentWrapper = styled.div`
 
   transition: 0.5s padding;
 
-  ${props =>
+  ${(props) =>
     props.small &&
     css`
       padding-right: 1em;
     `}
 `;
 
-const Title = styled.h1`
+const Title = styled.h3`
   margin: 0.5em;
   margin-left: 0;
   margin-right: 0;
@@ -300,7 +301,7 @@ const Title = styled.h1`
   box-shadow: 0;
   box-sizing: border-box;
 
-  ${props =>
+  ${(props) =>
     props.cardMode &&
     css`
       box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
@@ -329,7 +330,7 @@ const NetworkCards = styled.div`
   }
 
   transition: 0.5s height, 0.5s padding;
-  ${props =>
+  ${(props) =>
     props.small &&
     css`
       height: 0;

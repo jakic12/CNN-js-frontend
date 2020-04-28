@@ -35,7 +35,11 @@ export default (state = defaultState, action) => {
     case FETCH_REDUCED_DATASETS_SUCCESS:
       return {
         datasets: Object.assign(state.datasets, {
-          [action.server.uniqueName]: action.datasets,
+          [action.server.uniqueName]: Object.assign(
+            {},
+            state.datasets[action.server.uniqueName],
+            action.datasets
+          ),
         }),
         datasetsLoading: state.datasetsLoading,
         serverDatasetsLoading: Object.assign({}, state.serverDatasetsLoading, {
@@ -103,12 +107,26 @@ export default (state = defaultState, action) => {
           [action.datasetId]: action.err,
         }),
       };
-    case NEW_DATASET_REQUEST:
-      return;
+    // case NEW_DATASET_REQUEST:
+    //   return
     case NEW_DATASET_SUCCESS:
-      return;
-    case NEW_DATASET_ERROR:
-      return;
+      return {
+        datasets: Object.assign(state.datasets, {
+          [action.server.uniqueName]: Object.assign(
+            {},
+            state.datasets[action.server.uniqueName],
+            {
+              [action.dataset.id]: action.dataset,
+            }
+          ),
+        }),
+        datasetsLoading: state.datasetsError,
+        serverDatasetsLoading: state.serverDatasetsLoading,
+        serverDatasetsError: state.serverDatasetsError,
+        datasetsError: state.datasetsError,
+      };
+    // case NEW_DATASET_ERROR:
+    //   return;
     default:
       return state;
   }

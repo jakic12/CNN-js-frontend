@@ -4,7 +4,7 @@ import { fetchDatasets } from "../redux/actions/datasets";
 import { NetworkCardParent } from "../components/NetworkCard";
 import Error, { translateError } from "../components/Error";
 import ServerLogin from "../components/ServerLogin";
-import DatasetCard from "../components/DatasetCard";
+import DatasetCard, { AddDatasetCard } from "../components/DatasetCard";
 
 class Datasets extends React.Component {
   constructor(props) {
@@ -41,18 +41,24 @@ class Datasets extends React.Component {
             {this.props.datasets.serverDatasetsError[server.uniqueName] ===
               `Unauthorized` && <ServerLogin server={server} />}
             {!this.props.datasets.serverDatasetsError[server.uniqueName] &&
-              this.props.datasets.datasets[server.uniqueName] &&
-              Object.keys(
-                this.props.datasets.datasets[server.uniqueName]
-              ).map((datasetId) => (
-                <DatasetCard
-                  key={`dataset_card_${datasetId}`}
-                  dataset={
-                    this.props.datasets.datasets[server.uniqueName][datasetId]
-                  }
-                  serverId={server.uniqueName}
-                />
-              ))}
+              this.props.datasets.datasets[server.uniqueName] && (
+                <>
+                  {Object.keys(
+                    this.props.datasets.datasets[server.uniqueName]
+                  ).map((datasetId) => (
+                    <DatasetCard
+                      key={`dataset_card_${datasetId}`}
+                      dataset={
+                        this.props.datasets.datasets[server.uniqueName][
+                          datasetId
+                        ]
+                      }
+                      serverId={server.uniqueName}
+                    />
+                  ))}
+                  <AddDatasetCard server={server} />
+                </>
+              )}
           </NetworkCardParent>
         ))}
       </div>

@@ -131,7 +131,11 @@ const AnimFSC = ({
       <AnimatedCard {...colors} style={cardProps}>
         <div
           ref={(ref) => setInnerDivRef(ref)}
-          style={fullscreen ? { height: `100%`, width: `100%` } : {}}
+          style={
+            fullscreen
+              ? { height: `100%`, width: `100%`, boxSizing: `border-box` }
+              : {}
+          }
         >
           {contentFunction(() => setClosing(true))}
         </div>

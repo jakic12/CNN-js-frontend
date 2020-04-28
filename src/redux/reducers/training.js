@@ -16,6 +16,13 @@ export default (state = defaultState, action) => {
           {
             [action.network.id]: {
               dataset: Object.assign({}, action.dataset, { data: undefined }),
+              epochs: action.epochs,
+              epoch: `initializing`,
+              learningRate: action.learningRate,
+              learningRateArr: [],
+              errArr: [],
+              accuracyArr: [],
+              trainingInstance: action.trainingInstance,
             },
           }
         ),
@@ -36,6 +43,7 @@ export default (state = defaultState, action) => {
           {
             [action.network.id]: {
               epoch: action.epoch,
+              epochs: action.epochs,
               err: action.err,
               accuracy: action.accuracy,
               learningRate: action.learningRate,
@@ -44,6 +52,31 @@ export default (state = defaultState, action) => {
                 state[action.server.uniqueName][action.network.id].dataset,
                 { data: undefined }
               ),
+              learningRateArr: Object.assign(
+                [],
+                state[action.server.uniqueName][action.network.id]
+                  .learningRateArr,
+                {
+                  [action.epoch]: action.learningRate * -1,
+                }
+              ),
+              errArr: Object.assign(
+                [],
+                state[action.server.uniqueName][action.network.id].errArr,
+                {
+                  [action.epoch]: action.err,
+                }
+              ),
+              accuracyArr: Object.assign(
+                [],
+                state[action.server.uniqueName][action.network.id].accuracyArr,
+                {
+                  [action.epoch]: action.accuracy,
+                }
+              ),
+              trainingInstance:
+                state[action.server.uniqueName][action.network.id]
+                  .trainingInstance,
             },
           }
         ),

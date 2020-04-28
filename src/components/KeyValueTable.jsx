@@ -8,10 +8,10 @@ const Card = styled.div`
     0 2px 4px -1px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: row;
-  background: ${props => props.backgroundbyelevation(1)};
+  background: ${(props) => props.backgroundbyelevation(1)};
 
   &:not(:first-child) {
-    margin-top: 2em;
+    margin-top: 1em;
   }
   border-radius: 5px;
 `;
@@ -36,7 +36,7 @@ const StyledInput = styled.input`
   border-radius: 5px;
   border: none;
   background: none;
-  color: ${props => props.subaccenttextcolor};
+  color: ${(props) => props.subaccenttextcolor};
 `;
 
 const KeyValueWrapper = styled.div`
@@ -46,25 +46,25 @@ const KeyValueWrapper = styled.div`
 const KeyValueTable = ({ data, editFunction, colors, include }) => (
   <KeyValueWrapper>
     {!include &&
-      Object.keys(data).map(key => (
+      Object.keys(data).map((key) => (
         <Card {...colors} key={`key_value_table_${key}`}>
           <Key>{key}</Key>
           <Value>
             <StyledInput
               value={data[key]}
-              onChange={evt => editFunction(key, evt.target.value)}
+              onChange={(evt) => editFunction(key, evt.target.value)}
             />
           </Value>
         </Card>
       ))}
     {include &&
-      include.map(key => (
+      include.map((key) => (
         <Card {...colors} key={`key_value_table_${key}`}>
           <Key>{key}</Key>
           <Value>
             <StyledInput
               value={data[key]}
-              onChange={evt => editFunction(key, evt.target.value)}
+              onChange={(evt) => editFunction(key, evt.target.value)}
             />
           </Value>
         </Card>
@@ -72,4 +72,4 @@ const KeyValueTable = ({ data, editFunction, colors, include }) => (
   </KeyValueWrapper>
 );
 
-export default connect(state => state)(KeyValueTable);
+export default connect((state) => state)(KeyValueTable);

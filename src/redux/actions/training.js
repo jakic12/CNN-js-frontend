@@ -9,12 +9,18 @@ export const startedTraining = ({
   server,
   dataset,
   trainingParams,
+  epochs,
+  learningRate,
+  trainingInstance,
 }) => ({
   type: START_TRAINING,
   network,
   server,
   dataset,
   trainingParams,
+  epochs,
+  learningRate,
+  trainingInstance,
 });
 
 export const stoppedTraining = ({ network, server }) => ({
@@ -30,6 +36,7 @@ export const trainingProgress = ({
   accuracy,
   learningRate,
   network,
+  epochs,
 }) => ({
   type: TRAINING_PROGRESS,
   epoch,
@@ -38,6 +45,7 @@ export const trainingProgress = ({
   learningRate,
   server,
   network,
+  epochs,
 });
 
 export const startTraining = ({
@@ -54,7 +62,17 @@ export const startTraining = ({
     trainingParams,
   });
   trainingInstance.addEventListener("start", () => {
-    dispatch(startedTraining({ network, server, dataset, trainingParams }));
+    dispatch(
+      startedTraining({
+        network,
+        server,
+        dataset,
+        trainingParams,
+        learningRate: trainingParams.learningRate,
+        epochs: trainingParams.epochs,
+        trainingInstance: trainingInstance,
+      })
+    );
   });
   trainingInstance.addEventListener("end", () => {
     dispatch(stoppedTraining({ network, server }));
@@ -70,6 +88,7 @@ export const startTraining = ({
           learningRate,
           server,
           network,
+          epochs: trainingParams.epochs,
         })
       );
     }

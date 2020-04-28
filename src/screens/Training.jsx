@@ -43,11 +43,16 @@ const TrainingList = connect((state) => state)(({ data, colors, networks }) => {
   return (
     <>
       <TrainingHeader {...colors}>
-        {[`network`, `server`, `learning rate`, `error`, `accuracy`].map(
-          (c, i) => (
-            <Column key={`header_item_${i}`}>{c}</Column>
-          )
-        )}
+        {[
+          `network`,
+          `server`,
+          `epoch`,
+          `learning rate`,
+          `error`,
+          `accuracy`,
+        ].map((c, i) => (
+          <Column key={`header_item_${i}`}>{c}</Column>
+        ))}
       </TrainingHeader>
       <TrainingWrapper>
         {data.map((row, i) => (
@@ -58,6 +63,11 @@ const TrainingList = connect((state) => state)(({ data, colors, networks }) => {
           >
             <Column>{networks.networks[row.server][row.network].name}</Column>
             <Column>{row.server}</Column>
+            <Column>
+              {row.epoch === `initializing`
+                ? `initializing`
+                : `${row.epoch}/${row.epochs}`}
+            </Column>
             <Column>{round(row.learningRate, 5)}</Column>
             <Column>{round(row.err, 5)}</Column>
             <Column>{`${round(row.accuracy, 4) * 100}%`}</Column>
@@ -84,7 +94,7 @@ const StartButton = styled(Link)`
   }
 `;
 
-const Title = styled.h1`
+const Title = styled.h3`
   margin: 0.5em;
   margin-left: 0;
   margin-right: 0;

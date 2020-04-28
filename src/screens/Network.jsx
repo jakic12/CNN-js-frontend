@@ -20,7 +20,7 @@ const NetworkWrapper = styled.div`
   box-sizing: border-box;
 `;
 
-const Title = styled.h1`
+const Title = styled.h3`
   margin: 0.5em;
   margin-left: 0;
   margin-right: 0;

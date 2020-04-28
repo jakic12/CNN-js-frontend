@@ -22,7 +22,7 @@ const TrainingWrapper = styled.div`
   padding: 1em;
 `;
 
-const Title = styled.h1`
+const Title = styled.h3`
   margin: 0.5em;
   margin-left: 0;
   margin-right: 0;

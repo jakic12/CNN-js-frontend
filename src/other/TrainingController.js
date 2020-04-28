@@ -82,6 +82,7 @@ export default class TrainingController extends WithEventListener {
   }
 
   terminate() {
+    this.emitEvent("end");
     if (this.trainingInstance) this.trainingInstance.terminate();
   }
 }
