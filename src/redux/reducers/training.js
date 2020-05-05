@@ -4,7 +4,7 @@ import {
   TRAINING_PROGRESS,
 } from "../actions/training";
 
-const defaultState = {};
+const defaultState = { trained: [] };
 
 export default (state = defaultState, action) => {
   switch (action.type) {
@@ -28,12 +28,15 @@ export default (state = defaultState, action) => {
         ),
       });
     case STOP_TRAINING:
+      const serverCopy = Object.assign({}, state[action.server.uniqueName]);
+      const a = Object.assign(serverCopy[action.network.id], {
+        server: action.server.uniqueName,
+        network: action.network.id,
+      });
+      delete serverCopy[action.network.id];
       return Object.assign({}, state, {
-        [action.server.uniqueName]: Object.assign(
-          {},
-          state[action.server.uniqueName],
-          { [action.network.id]: undefined }
-        ),
+        [action.server.uniqueName]: serverCopy,
+        trained: state.trained.concat([a]),
       });
     case TRAINING_PROGRESS:
       return Object.assign({}, state, {

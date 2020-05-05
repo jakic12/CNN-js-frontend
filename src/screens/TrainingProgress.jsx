@@ -7,6 +7,9 @@ import { Link, Redirect } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import ButtonWithConfirmation from "../components/ButtonWithConfirmation";
 
+import ConfusionMatrix from "../components/ConfusionMatrix";
+import { getDataset } from "../other/api";
+
 const ChardCard = styled.div`
   background: ${(props) => props.backgroundbyelevation(1)};
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
@@ -121,129 +124,127 @@ const LeftRightChild = styled.div`
 `;
 
 class TrainingProgress extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
+    const trained =
+      this.props.match.params.serverUniqueName === `trained` &&
+      this.props.training.trained[this.props.match.params.networkId];
+    const serverName = trained
+      ? this.props.training.trained[this.props.match.params.networkId].server
+      : this.props.match.params.serverUniqueName;
+    const networkId = trained
+      ? this.props.training.trained[this.props.match.params.networkId].network
+      : this.props.match.params.networkId;
+
+    const trainingData = trained
+      ? this.props.training.trained[this.props.match.params.networkId]
+      : this.props.training[serverName] &&
+        this.props.training[serverName][networkId];
     return (
       <TrainingProgressWrapper>
-        {this.props.match.params.serverUniqueName &&
-        this.props.match.params.networkId ? (
-          this.props.networks.networks[
-            this.props.match.params.serverUniqueName
-          ] &&
-          this.props.networks.networks[
-            this.props.match.params.serverUniqueName
-          ][this.props.match.params.networkId] ? (
-            this.props.training[this.props.match.params.serverUniqueName] &&
-            this.props.training[this.props.match.params.serverUniqueName][
-              this.props.match.params.networkId
-            ] ? (
-              <LeftRight>
-                <LeftRightChild>
-                  <ChartWrapper
-                    colors={this.props.colors}
-                    datasets={[
-                      {
-                        label: `error`,
-                        data: this.props.training[
-                          this.props.match.params.serverUniqueName
-                        ][this.props.match.params.networkId].errArr,
-                      },
-                    ]}
-                    title={`error`}
-                    /*maxX={
+        {serverName && networkId ? (
+          this.props.networks.networks[serverName] &&
+          this.props.networks.networks[serverName][networkId] ? (
+            trained || (this.props.training[serverName] && trainingData) ? (
+              <>
+                <LeftRight>
+                  <LeftRightChild>
+                    <ChartWrapper
+                      colors={this.props.colors}
+                      datasets={[
+                        {
+                          label: `error`,
+                          data: trainingData.errArr,
+                        },
+                      ]}
+                      title={`error`}
+                      /*maxX={
                       this.props.training[
-                        this.props.match.params.serverUniqueName
-                      ][this.props.match.params.networkId].epochs
+                        serverName
+                      ][networkId].epochs
                     }*/
-                    color={this.props.colors.primarycolor}
-                  />
-                  <ChartWrapper
-                    colors={this.props.colors}
-                    datasets={[
-                      {
-                        label: `accuracy`,
-                        data: this.props.training[
-                          this.props.match.params.serverUniqueName
-                        ][this.props.match.params.networkId].accuracyArr.map(
-                          (i) => i * 100
-                        ),
-                      },
-                    ]}
-                    title={`accuracy`}
-                    /*maxX={
+                      color={this.props.colors.primarycolor}
+                    />
+                    <ChartWrapper
+                      colors={this.props.colors}
+                      datasets={[
+                        {
+                          label: `accuracy`,
+                          data: trainingData.accuracyArr.map((i) => i * 100),
+                        },
+                      ]}
+                      title={`accuracy`}
+                      /*maxX={
                       this.props.training[
-                        this.props.match.params.serverUniqueName
-                      ][this.props.match.params.networkId].epochs
+                        serverName
+                      ][networkId].epochs
                     }*/
-                    color={this.props.colors.primarycolor}
-                  />
-                  {/*<ChartWrapper
+                      color={this.props.colors.primarycolor}
+                    />
+                    {/*<ChartWrapper
                   colors={this.props.colors}
                     datasets={[
                       {
                         label: `learning rate`,
                         data: this.props.training[
-                          this.props.match.params.serverUniqueName
-                        ][this.props.match.params.networkId].learningRateArr,
+                          serverName
+                        ][networkId].learningRateArr,
                       },
                     ]}
                     title={`learning rate`}
                     // maxX={
                     //   this.props.training[
-                    //     this.props.match.params.serverUniqueName
-                    //   ][this.props.match.params.networkId].epochs
+                    //     serverName
+                    //   ][networkId].epochs
                     // }
                     color={this.props.colors.primarycolor}
                   />*/}
-                </LeftRightChild>
-                <LeftRightChild>
-                  <Table
-                    data={{
-                      network: this.props.networks.networks[
-                        this.props.match.params.serverUniqueName
-                      ][this.props.match.params.networkId].name,
-                      dataset:
-                        this.props.training[
-                          this.props.match.params.serverUniqueName
-                        ] &&
-                        this.props.training[
-                          this.props.match.params.serverUniqueName
-                        ][this.props.match.params.networkId].dataset.name,
-                    }}
-                  />
-                  <Table
-                    style={{ marginTop: `1em` }}
-                    data={
-                      this.props.training[
-                        this.props.match.params.serverUniqueName
-                      ][this.props.match.params.networkId]
-                    }
-                    include={[
-                      `epoch`,
-                      `epochs`,
-                      `learningRate`,
-                      `err`,
-                      `accuracy`,
-                    ]}
-                  />
+                  </LeftRightChild>
+                  <LeftRightChild>
+                    <Table
+                      data={{
+                        network: this.props.networks.networks[serverName][
+                          networkId
+                        ].name,
+                        dataset:
+                          this.props.training[serverName] &&
+                          trainingData.dataset.name,
+                      }}
+                    />
+                    <Table
+                      style={{ marginTop: `1em` }}
+                      data={trainingData}
+                      include={[
+                        `epoch`,
+                        `epochs`,
+                        `learningRate`,
+                        `err`,
+                        `accuracy`,
+                      ]}
+                    />
 
-                  <ButtonWithConfirmation
-                    color={this.props.colors.errorcolor}
-                    textcolor={`white`}
-                    text={`stop learning`}
-                    onConfirm={() =>
-                      this.props.training[
-                        this.props.match.params.serverUniqueName
-                      ][
-                        this.props.match.params.networkId
-                      ].trainingInstance.terminate()
-                    }
-                  />
-                </LeftRightChild>
-              </LeftRight>
+                    {!trained && (
+                      <ButtonWithConfirmation
+                        color={this.props.colors.errorcolor}
+                        textcolor={`white`}
+                        text={`stop learning`}
+                        onConfirm={() =>
+                          this.props.training[serverName][
+                            networkId
+                          ].trainingInstance.terminate()
+                        }
+                      />
+                    )}
+                  </LeftRightChild>
+                </LeftRight>
+                <ConfusionMatrix
+                  network={this.props.networks.networks[serverName][networkId]}
+                  dataset={
+                    this.props.datasets.datasets[serverName][
+                      trainingData.dataset.id
+                    ]
+                  }
+                />
+              </>
             ) : (
               <>
                 <Error error={`network isn't training`} />
@@ -251,7 +252,7 @@ class TrainingProgress extends React.Component {
               </>
             )
           ) : (
-            <Error error={`network doesn't exist`} />
+            <Error error={`network isn't training`} />
           )
         ) : (
           <Error error={`invalid network or server`} />
@@ -261,4 +262,7 @@ class TrainingProgress extends React.Component {
   }
 }
 
-export default connect((state) => state)(TrainingProgress);
+export default connect(
+  (state) => state,
+  (dispatch) => ({ fetchDataset: (id, server) => getDataset(id, server) })
+)(TrainingProgress);
