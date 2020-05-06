@@ -132,13 +132,13 @@ export const fetchNetwork = (networkId, server, dispatch) => {
 export const setNetwork = (
   server,
   network,
-  dispatch,
-  fetchNetworksAfter = true
+  dispatch
+  //fetchNetworksAfter = true
 ) => {
   dispatch(setNetworkRequest({ server, network }));
   setNetworkApi(network, server)
     .then(() => {
-      if (fetchNetworksAfter) fetchNetworks(server, dispatch);
+      //if (fetchNetworksAfter) fetchNetworks(server, dispatch);
       dispatch(setNetworkSuccess({ server, network }));
     })
     .catch((err) => dispatch(setNetworkError({ server, network, err })));

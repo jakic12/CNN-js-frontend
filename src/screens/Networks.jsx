@@ -17,7 +17,7 @@ import ServerLogin from "../components/ServerLogin";
 import Error, { translateError } from "../components/Error";
 
 import { NetworkArchitectures, CNN } from "../CNN-js/cnn";
-import { PropagateLoader } from "react-spinners";
+import { SyncLoader } from "react-spinners";
 
 import styled from "styled-components";
 import AnimatedFullScreenCard from "../components/AnimatedFullScreenCard";
@@ -161,7 +161,7 @@ class Networks extends Component {
 
                 {this.props.networks.isLoading[server.uniqueName] && (
                   <div>
-                    <PropagateLoader />
+                    <SyncLoader />
                   </div>
                 )}
                 {this.props.networks.error[server.uniqueName] &&

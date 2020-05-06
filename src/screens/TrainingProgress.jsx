@@ -17,9 +17,9 @@ const ChardCard = styled.div`
   color: ${(props) => props.textcolor};
   border-radius: 5px;
   :not(:first-child) {
-    margin-top: 1em;
+    margin-top: 0.5em;
   }
-  padding: 1em;
+  padding: 0.5em;
 `;
 
 class ChartWrapper extends React.Component {
@@ -69,6 +69,17 @@ class ChartWrapper extends React.Component {
   }
 }
 
+const TopBottom = styled.div`
+  height: 100%;
+`;
+
+const TopBottomChild = styled.div`
+  height: 50%;
+  width: 100%;
+  padding: 0.5em;
+  box-sizing: border-box;
+`;
+
 const TableWrapper = styled.div`
   background: ${(props) => props.backgroundbyelevation(1)};
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
@@ -89,7 +100,7 @@ const TableRow = styled.div`
 const TableColumn = styled.div`
   width: 50%;
   text-align: center;
-  padding: 1em;
+  padding: 0.5em;
 `;
 
 const Table = connect((state) => ({
@@ -99,14 +110,25 @@ const Table = connect((state) => ({
     {(include || Object.keys(data)).map((key, i) => (
       <TableRow key={`data_row_${i}`}>
         <TableColumn>{key}</TableColumn>
-        <TableColumn>{data[key]}</TableColumn>
+        {typeof data[key] === `object` ? (
+          <TableColumn>
+            {Object.keys(data[key]).map((keyInner, j) => (
+              <TableRow key={`data_row_row_${j}`}>
+                <TableColumn>{keyInner}</TableColumn>
+                <TableColumn>{data[key][keyInner]}</TableColumn>
+              </TableRow>
+            ))}
+          </TableColumn>
+        ) : (
+          <TableColumn>{data[key]}</TableColumn>
+        )}
       </TableRow>
     ))}
   </TableWrapper>
 ));
 
 const TrainingProgressWrapper = styled.div`
-  padding: 1em;
+  padding: 0.5em;
 `;
 
 const LeftRight = styled.div`
@@ -119,11 +141,18 @@ const LeftRight = styled.div`
 
 const LeftRightChild = styled.div`
   width: 50%;
-  padding: 1em;
   max-height: 100vh;
+  box-sizing: border-box;
 `;
 
 class TrainingProgress extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      stats: {},
+    };
+  }
+
   render() {
     const trained =
       this.props.match.params.serverUniqueName === `trained` &&
@@ -148,39 +177,45 @@ class TrainingProgress extends React.Component {
               <>
                 <LeftRight>
                   <LeftRightChild>
-                    <ChartWrapper
-                      colors={this.props.colors}
-                      datasets={[
-                        {
-                          label: `error`,
-                          data: trainingData.errArr,
-                        },
-                      ]}
-                      title={`error`}
-                      /*maxX={
+                    <TopBottom>
+                      <TopBottomChild>
+                        <ChartWrapper
+                          colors={this.props.colors}
+                          datasets={[
+                            {
+                              label: `error`,
+                              data: trainingData.errArr,
+                            },
+                          ]}
+                          title={`error`}
+                          /*maxX={
                       this.props.training[
                         serverName
                       ][networkId].epochs
                     }*/
-                      color={this.props.colors.primarycolor}
-                    />
-                    <ChartWrapper
-                      colors={this.props.colors}
-                      datasets={[
-                        {
-                          label: `accuracy`,
-                          data: trainingData.accuracyArr.map((i) => i * 100),
-                        },
-                      ]}
-                      title={`accuracy`}
-                      /*maxX={
+                          color={this.props.colors.primarycolor}
+                        />
+                      </TopBottomChild>
+                      <TopBottomChild>
+                        <ChartWrapper
+                          colors={this.props.colors}
+                          datasets={[
+                            {
+                              label: `accuracy`,
+                              data: trainingData.accuracyArr.map(
+                                (i) => i * 100
+                              ),
+                            },
+                          ]}
+                          title={`accuracy`}
+                          /*maxX={
                       this.props.training[
                         serverName
                       ][networkId].epochs
                     }*/
-                      color={this.props.colors.primarycolor}
-                    />
-                    {/*<ChartWrapper
+                          color={this.props.colors.primarycolor}
+                        />
+                        {/*<ChartWrapper
                   colors={this.props.colors}
                     datasets={[
                       {
@@ -198,52 +233,74 @@ class TrainingProgress extends React.Component {
                     // }
                     color={this.props.colors.primarycolor}
                   />*/}
+                      </TopBottomChild>
+                    </TopBottom>
                   </LeftRightChild>
                   <LeftRightChild>
-                    <Table
-                      data={{
-                        network: this.props.networks.networks[serverName][
-                          networkId
-                        ].name,
-                        dataset:
-                          this.props.training[serverName] &&
-                          trainingData.dataset.name,
-                      }}
-                    />
-                    <Table
-                      style={{ marginTop: `1em` }}
-                      data={trainingData}
-                      include={[
-                        `epoch`,
-                        `epochs`,
-                        `learningRate`,
-                        `err`,
-                        `accuracy`,
-                      ]}
-                    />
-
-                    {!trained && (
-                      <ButtonWithConfirmation
-                        color={this.props.colors.errorcolor}
-                        textcolor={`white`}
-                        text={`stop learning`}
-                        onConfirm={() =>
-                          this.props.training[serverName][
-                            networkId
-                          ].trainingInstance.terminate()
-                        }
-                      />
-                    )}
+                    <TopBottom>
+                      <TopBottomChild>
+                        <Table
+                          data={{
+                            network: this.props.networks.networks[serverName][
+                              networkId
+                            ].name,
+                            dataset:
+                              this.props.training[serverName] &&
+                              trainingData.dataset.name,
+                          }}
+                        />
+                        <Table
+                          style={{ marginTop: `0.5em` }}
+                          data={trainingData}
+                          include={[
+                            `epoch`,
+                            `epochs`,
+                            `learningRate`,
+                            `err`,
+                            `accuracy`,
+                          ]}
+                        />
+                      </TopBottomChild>
+                      <TopBottomChild>
+                        <LeftRight>
+                          <LeftRightChild style={{ paddingRight: `0.5em` }}>
+                            <ConfusionMatrix
+                              updateVar={trainingData.epoch}
+                              network={
+                                this.props.networks.networks[serverName][
+                                  networkId
+                                ]
+                              }
+                              dataset={
+                                this.props.datasets.datasets[serverName][
+                                  trainingData.dataset.id
+                                ]
+                              }
+                              statsCallback={(stats) =>
+                                this.setState({ stats })
+                              }
+                            />
+                          </LeftRightChild>
+                          <LeftRightChild style={{ paddingLeft: `0.5em` }}>
+                            <Table data={this.state.stats.avg || {}} />
+                            {!trained && (
+                              <ButtonWithConfirmation
+                                color={this.props.colors.errorcolor}
+                                textcolor={`white`}
+                                text={`stop learning`}
+                                onConfirm={() =>
+                                  this.props.training[serverName][
+                                    networkId
+                                  ].trainingInstance.terminate()
+                                }
+                              />
+                            )}
+                          </LeftRightChild>
+                        </LeftRight>
+                      </TopBottomChild>
+                    </TopBottom>
                   </LeftRightChild>
                 </LeftRight>
-                <ConfusionMatrix
-                  network={this.props.networks.networks[serverName][networkId]}
-                  dataset={
-                    this.props.datasets.datasets[serverName][
-                      trainingData.dataset.id
-                    ]
-                  }
-                />
               </>
             ) : (
               <>
