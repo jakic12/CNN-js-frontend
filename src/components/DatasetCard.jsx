@@ -270,7 +270,7 @@ export const AddDatasetCard = connect(
               <LeftRight>
                 <LeftRightChild>
                   <Dropzone
-                    accept={".bin"}
+                    accept={".jpg,.png"}
                     onDrop={(acceptedFiles) => {
                       acceptedFiles.forEach((file) => {
                         setFileName(file.name);

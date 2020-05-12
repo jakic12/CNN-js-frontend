@@ -10,12 +10,19 @@ import NetworkShapeVisual from "../components/NetworkShapeVisual";
 import styled from "styled-components";
 import Error from "../components/Error";
 import KeyValueTable from "../components/KeyValueTable";
+import Dropdown from "react-dropdown";
+import "react-dropdown/style.css";
 
 // redux actions
 import { fetchNetwork } from "../redux/actions/networks";
 
 // utils
 import { exportText } from "../other/utils";
+import NetworkPropagation from "../components/NetworkPropagation";
+import Dropzone from "react-dropzone";
+import { fetchDatasets } from "../redux/actions/datasets";
+import { openDatasetFromBuffer } from "../CNN-js/datasetProcessor";
+import { deepNormalize } from "../CNN-js/math";
 
 const NetworkWrapper = styled.div`
   padding: 20px;
@@ -69,6 +76,19 @@ const DownloadButton = styled.div`
   }
 `;
 
+const ImageSelect = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const UploadRoot = styled.div`
+  padding: 1em;
+  border: 1px solid gray;
+  border-radius: 5px;
+  margin-right: 1em;
+`;
+
 class Network extends Component {
   constructor(props) {
     super(props);
@@ -85,6 +105,8 @@ class Network extends Component {
         (server) =>
           server.uniqueName === this.props.match.params.serverUniqueName
       ),
+      uploadedImage: null,
+      selectedDatasetImageIndex: 0,
     };
 
     this.checkForError = this.checkForError.bind(this);
@@ -92,6 +114,10 @@ class Network extends Component {
 
   componentDidMount() {
     this.checkForError();
+
+    this.props.servers.servers.map((s) => {
+      this.props.fetchDatasets(s);
+    });
   }
 
   checkForError() {
@@ -197,7 +223,117 @@ class Network extends Component {
                 </DownloadButton>
               </FlexCenter>
             </NetworkScreenTitleWrapper>
-            <NetworkShapeVisual network={this.state.network} />
+            <NetworkShapeVisual network={this.state.network} withData={true} />
+            <Subtitle>Classify</Subtitle>
+            <ImageSelect>
+              <Dropzone
+                accept={".jpg, .png"}
+                onDrop={(acceptedFiles) => {
+                  acceptedFiles.forEach((file) => {
+                    const reader = new FileReader();
+
+                    reader.onabort = () =>
+                      console.log("file reading was aborted");
+                    reader.onerror = () =>
+                      console.log("file reading has failed");
+                    reader.onload = () => {
+                      this.setState({
+                        uploadedImage: reader.result,
+                        selectedDatasetIndex: null,
+                      });
+                    };
+                    reader.readAsArrayBuffer(file);
+                  });
+                }}
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <section>
+                    <UploadRoot {...getRootProps()}>
+                      <input {...getInputProps()} />
+                      Drag 'n' drop image file here, or click to select it
+                    </UploadRoot>
+                  </section>
+                )}
+              </Dropzone>
+              <div style={{ padding: `1em` }}>or</div>
+              <Dropdown
+                placeholder="Select a dataset"
+                options={(() => {
+                  const out = Object.keys(this.props.datasets.datasets).map(
+                    (s) => ({
+                      type: `group`,
+                      name: s,
+                      items: Object.keys(this.props.datasets.datasets[s]).map(
+                        (dId) => ({
+                          value: dId,
+                          label:
+                            this.props.datasets.datasets[s][dId].name +
+                            ` (${
+                              this.props.datasets.datasets[s][dId].data.length /
+                              (this.props.datasets.datasets[s][dId].imageSize **
+                                2 *
+                                this.props.datasets.datasets[s][dId]
+                                  .colorDepth +
+                                1)
+                            })`,
+                        })
+                      ),
+                    })
+                  );
+                  return out;
+                })()}
+                onChange={(v) => {
+                  this.setState({ selectedDatasetIndex: v.value });
+                }}
+                value={this.state.selectedDatasetIndex}
+              />
+              <input
+                type="text"
+                value={this.state.selectedDatasetImageIndex}
+                onChange={(e) => {
+                  this.setState({
+                    selectedDatasetImageIndex:
+                      parseInt(e.target.value) ||
+                      this.state.selectedDatasetImageIndex,
+                    uploadedImage: null,
+                  });
+                }}
+                style={{ padding: `8px`, width: `5em`, fontSize: `1em` }}
+              />
+
+              {/*<DownloadButton
+                {...this.props.colors}
+                style={{ marginLeft: `1em` }}
+                onClick={
+
+                }
+              >
+                Classify
+              </DownloadButton>*/}
+            </ImageSelect>
+            <NetworkPropagation
+              network={this.state.network}
+              image={this.state.uploadedImage}
+              server={this.state.server}
+              rawData={(() => {
+                if (this.state.selectedDatasetIndex) {
+                  const inputArray = openDatasetFromBuffer(
+                    this.props.datasets.datasets[this.state.server.uniqueName][
+                      this.state.selectedDatasetIndex
+                    ].data
+                  )[this.state.selectedDatasetImageIndex].input;
+
+                  const datasetProps = this.props.datasets.datasets[
+                    this.state.server.uniqueName
+                  ][this.state.selectedDatasetIndex];
+                  if (datasetProps.normalizeMax) {
+                    return deepNormalize(inputArray, datasetProps.normalizeMax);
+                  } else {
+                    return inputArray;
+                  }
+                }
+              })()}
+            />
             <Subtitle>Parameters</Subtitle>
             <KeyValueTable
               data={this.state.network}
@@ -225,5 +361,6 @@ export default connect(
   (dispatch) => ({
     getNetwork: (networkId, server) =>
       fetchNetwork(networkId, server, dispatch),
+    fetchDatasets: (server) => fetchDatasets(server, dispatch),
   })
 )(Network);

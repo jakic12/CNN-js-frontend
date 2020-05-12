@@ -9,6 +9,7 @@ import { normalizeData } from "../other/utils";
 import Error from "./Error";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { connect } from "react-redux";
+import LayerCanvas from "./LayerCanvas";
 
 const LayerType = require("../CNN-js/cnn").LayerType;
 
@@ -61,7 +62,7 @@ const NetworkLayerWrapper = styled.div`
     0 3px 5px -1px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
   padding: 10px;
-  background: ${props => props.backgroundbyelevation(1)};
+  background: ${(props) => props.backgroundbyelevation(1)};
 
   &:hover {
     cursor: pointer;
@@ -94,82 +95,97 @@ const getSliceSize = (
   max = maxCONVSize
 ) => ({
   w: min + normalizedLayer.w * (max - min),
-  h: min + normalizedLayer.h * (max - min)
+  h: min + normalizedLayer.h * (max - min),
 });
 
+const getFilterSliceSize = (sliceSize, filterSize) =>
+  Math.min(sliceSize.w, sliceSize.h) * filterSize;
+
 const LAYER_STACK_slice = styled(animated.div)`
-  width: ${props => getSliceSize(props).w}em;
-  height: ${props => getSliceSize(props).h}em;
+  width: ${(props) => getSliceSize(props).w}em;
+  height: ${(props) => getSliceSize(props).h}em;
   margin: 1em;
-  background: ${props => props.backgroundbyelevation(3)};
-  border: 1px solid ${props => (props.darkMode ? `gray` : props.primarycolor)};
+  background: ${(props) => props.backgroundbyelevation(3)};
+  border: 1px solid ${(props) => (props.darkMode ? `gray` : props.primarycolor)};
   border-radius: 3px;
   position: absolute;
-  z-index: ${props => 300 - props.i};
+  z-index: ${(props) => 300 - props.i};
+  overflow: hidden;
 `;
 const LAYER_STACK_filter_wrapper = styled(animated.div)`
-  width: ${props => getSliceSize(props).w}em;
-  height: ${props => getSliceSize(props).h}em;
+  width: ${(props) => getSliceSize(props).w}em;
+  height: ${(props) => getSliceSize(props).h}em;
   margin: 1em;
 
   position: absolute;
-  z-index: ${props => 300 - props.i};
+  z-index: ${(props) => 300 - props.i};
   display: flex;
   justify-content: center;
   flex-direction: row;
   align-items: center;
 `;
+
 const LAYER_STACK_FILTER_inner = styled(animated.div)`
-  width: ${props => {
-    const dir = getSliceSize(props);
-    return Math.min(dir.w, dir.h) * props.f;
+  width: ${(props) => {
+    return getFilterSliceSize(getSliceSize(props), props.f);
   }}em;
-  height: ${props => {
-    const dir = getSliceSize(props);
-    return Math.min(dir.w, dir.h) * props.f;
+  height: ${(props) => {
+    return getFilterSliceSize(getSliceSize(props), props.f);
   }}em;
   box-sizing: border-box;
   max-height: 100%;
   max-width: 100%;
-  background: ${props => props.backgroundbyelevation(3)};
-  border: 1px solid ${props => (props.darkMode ? `gray` : props.primarycolor)};
+  background: ${(props) => props.backgroundbyelevation(3)};
+  border: 1px solid ${(props) => (props.darkMode ? `gray` : props.primarycolor)};
   border-radius: 3px;
+  overflow: hidden;
+  position: relative;
 `;
 const LAYER_STACK_wrapper = styled(animated.div)`
   position: relative;
 `;
-const LAYER_STACK_slice_component = connect(state => ({
-  colors: state.colors
-}))(({ layer, i, withData, layerNormalized, extended, filter, colors }) => {
-  const { w: slicewidth, h: sliceheight } = getSliceSize(layerNormalized);
-  const layerSliceProps = useSpring({
-    top: extended ? `${(sliceheight + 2) * i}em` : `-${i / 5}em`,
-    //                                ^ don't forget the margin
-    left: extended ? `0em` : `${i / 5}em`,
-    opacity: extended ? `1` : `${Math.max(1 - i / 10, 0)}`,
-    from:
-      i < 10
-        ? {
-            left: `${i / 5}em`,
-            top: `-${i / 5}em`,
-            opacity: `${Math.max(1 - i / 10, 0)}`
-          }
-        : {}
-  });
+const LAYER_STACK_slice_component = connect((state) => ({
+  colors: state.colors,
+}))(
+  ({
+    layer,
+    i,
+    withData,
+    layerNormalized,
+    extended,
+    filter,
+    colors,
+    layerData,
+    filterData,
+  }) => {
+    const { w: slicewidth, h: sliceheight } = getSliceSize(layerNormalized);
+    const layerSliceProps = useSpring({
+      top: extended ? `${(sliceheight + 2) * i}em` : `-${i / 5}em`,
+      //                                ^ don't forget the margin
+      left: extended ? `0em` : `${i / 5}em`,
+      opacity: extended ? `1` : `${Math.max(1 - i / 10, 0)}`,
+      from:
+        i < 10
+          ? {
+              left: `${i / 5}em`,
+              top: `-${i / 5}em`,
+              opacity: `${Math.max(1 - i / 10, 0)}`,
+            }
+          : {},
+    });
 
-  const filterProps = useSpring({
-    boxShadow: extended
-      ? `0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.20)`
-      : `0 0px 0px 0 rgba(0,0,0,0.14), 0 0px 0px 0 rgba(0,0,0,0.12), 0 0px 0px 0px rgba(0,0,0,0.20)`,
-    from: {
-      boxShadow: `0 0px 0px 0 rgba(0,0,0,0.14), 0 0px 0px 0 rgba(0,0,0,0.12), 0 0px 0px 0px rgba(0,0,0,0.20)`
-    }
-  });
+    const filterProps = useSpring({
+      boxShadow: extended
+        ? `0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.20)`
+        : `0 0px 0px 0 rgba(0,0,0,0.14), 0 0px 0px 0 rgba(0,0,0,0.12), 0 0px 0px 0px rgba(0,0,0,0.20)`,
+      from: {
+        boxShadow: `0 0px 0px 0 rgba(0,0,0,0.14), 0 0px 0px 0 rgba(0,0,0,0.12), 0 0px 0px 0px rgba(0,0,0,0.20)`,
+      },
+    });
 
-  if (filter) {
-    if (withData) {
-      return <canvas></canvas>; //TODO: handle withData
-    } else {
+    const sliceSizeProps = getSliceSize(layerNormalized);
+
+    if (filter) {
       return (
         <LAYER_STACK_filter_wrapper
           style={layerSliceProps}
@@ -184,13 +200,20 @@ const LAYER_STACK_slice_component = connect(state => ({
             f={layerNormalized.f}
             w={layerNormalized.w}
             h={layerNormalized.h}
-          ></LAYER_STACK_FILTER_inner>
+          >
+            <LayerCanvas
+              slice={layerData}
+              style={{ position: `absolute`, top: 0 }}
+              width={
+                getFilterSliceSize(sliceSizeProps, layerNormalized.f) + `em`
+              }
+              height={
+                getFilterSliceSize(sliceSizeProps, layerNormalized.f) + `em`
+              }
+            />
+          </LAYER_STACK_FILTER_inner>
         </LAYER_STACK_filter_wrapper>
       );
-    }
-  } else {
-    if (withData) {
-      return <canvas></canvas>;
     } else {
       return (
         <LAYER_STACK_slice
@@ -200,18 +223,29 @@ const LAYER_STACK_slice_component = connect(state => ({
           w={layerNormalized.w}
           h={layerNormalized.h}
           i={i}
-        ></LAYER_STACK_slice>
+        >
+          {withData && (
+            <LayerCanvas
+              style={{ position: `absolute`, top: 0 }}
+              slice={layerData}
+              width={sliceSizeProps.w + `em`}
+              height={sliceSizeProps.h + `em`}
+            />
+          )}
+        </LAYER_STACK_slice>
       );
     }
   }
-});
+);
 
 const LAYER_STACK = ({
   layer,
   withData,
   layerNormalized,
+  layerData,
+  filterData,
   extended,
-  withFilter
+  withFilter,
 }) => {
   const { w: sliceWidth, h: sliceHeight } = getSliceSize(layerNormalized);
   const emPadding = 1 * 2;
@@ -226,8 +260,8 @@ const LAYER_STACK = ({
       height: `${sliceHeight + emPadding}em`,
       width: `${sliceWidth + emPadding}em`,
       marginTop: `-${(sliceHeight + emPadding) / 2}em`,
-      marginLeft: `-${(sliceWidth + emPadding) / 2}em`
-    }
+      marginLeft: `-${(sliceWidth + emPadding) / 2}em`,
+    },
   });
   return (
     <>
@@ -235,7 +269,7 @@ const LAYER_STACK = ({
         <div
           style={{
             height: 0,
-            width: 0
+            width: 0,
           }}
         >
           <LAYER_STACK_wrapper style={wrapperStyle}>
@@ -248,6 +282,8 @@ const LAYER_STACK = ({
                       layer={layer}
                       i={i}
                       withData={withData}
+                      layerData={layerData && layerData[i]}
+                      filterData={filterData && filterData[i]}
                       layerNormalized={layerNormalized}
                       extended={extended}
                       filter={true}
@@ -261,7 +297,7 @@ const LAYER_STACK = ({
         style={{
           height: 0,
           width: 0,
-          marginLeft: withFilter ? `${sliceHeight + emPadding}em` : ``
+          marginLeft: withFilter ? `${sliceHeight + emPadding}em` : ``,
         }}
       >
         <LAYER_STACK_wrapper style={wrapperStyle}>
@@ -274,6 +310,8 @@ const LAYER_STACK = ({
                     layer={layer}
                     i={i}
                     withData={withData}
+                    layerData={layerData && layerData[i]}
+                    filterData={filterData && filterData[i]}
                     layerNormalized={layerNormalized}
                     extended={extended}
                   />
@@ -288,7 +326,7 @@ const LAYER_STACK = ({
 //NETWORK LAYERS
 
 //normalize layers, normalize f as percentage of width and height minimum
-const normalizeLayers = shape => {
+const normalizeLayers = (shape) => {
   const out = normalizeData(shape, 0);
   shape.forEach((s, i) => {
     if (s.f) {
@@ -298,8 +336,8 @@ const normalizeLayers = shape => {
   return out;
 };
 
-export default connect(state => ({
-  colors: state.colors
+export default connect((state) => ({
+  colors: state.colors,
 }))(({ colors, network, small, withData }) => {
   const [extended, setExtended] = useState(
     new Array(network.shape.length).fill(false)
@@ -330,6 +368,8 @@ export default connect(state => ({
                       {layerShape.type === LayerType.CONV && (
                         <FilterLayer>
                           <LAYER_STACK
+                            layerData={network.layers[i]}
+                            filterData={network.weights[i]}
                             layer={layerShape}
                             layerNormalized={layersNormalized[i]}
                             withData={withData}
@@ -342,17 +382,19 @@ export default connect(state => ({
                         <NetworkLayer>
                           {layerShape.type === LayerType.INPUT && (
                             <LAYER_STACK
+                              layerData={network.layers[i]}
                               layer={layerShape}
                               layerNormalized={layersNormalized[i]}
-                              withData={withData}
+                              withData={withData ? { layer: i } : null}
                               extended={extended[i]}
                             />
                           )}
                           {layerShape.type === LayerType.POOL && (
                             <LAYER_STACK
+                              layerData={network.layers[i]}
                               layer={layerShape}
                               layerNormalized={layersNormalized[i]}
-                              withData={withData}
+                              withData={withData ? { layer: i } : null}
                               extended={extended[i]}
                             />
                           )}
@@ -363,7 +405,7 @@ export default connect(state => ({
                     </NetworkFilterAndInput>
                     <LayerTypeTitle>
                       {Object.keys(LayerType).find(
-                        key => LayerType[key] === layerShape.type
+                        (key) => LayerType[key] === layerShape.type
                       )}
                     </LayerTypeTitle>
                   </NetworkLayerWrapper>
