@@ -84,6 +84,19 @@ export default class TrainingController extends WithEventListener {
     }
   }
 
+  confusionMatrix() {
+    this.emitEvent("confusionMatrixStart");
+    this.trainingInstance = new Worker("/trainingWorker.js");
+    this.trainingInstance.addEventListener("message", (m) => {
+      this.emitEvent(m.data.event, m.data.data);
+    });
+    this.trainingInstance.postMessage({
+      network: JSON.stringify(this.network),
+      dataset: this.dataset,
+      cmd: `confusionMatrix`,
+    });
+  }
+
   terminate() {
     this.emitEvent("end");
     if (this.trainingInstance) this.trainingInstance.terminate();

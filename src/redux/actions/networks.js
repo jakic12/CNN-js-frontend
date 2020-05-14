@@ -5,6 +5,8 @@ import {
   setNetwork as setNetworkApi,
 } from "../../other/api";
 
+import { CNN } from "../../CNN-js/cnn";
+
 export const FETCH_NETWORKS_REQUEST = `FETCH_NETWORKS_REQUEST`;
 export const FETCH_NETWORKS_SUCCESS = `FETCH_NETWORKS_SUCCESS`;
 export const FETCH_NETWORKS_ERROR = `FETCH_NETWORKS_ERROR`;
@@ -132,13 +134,17 @@ export const fetchNetwork = (networkId, server, dispatch) => {
 export const setNetwork = (
   server,
   network,
-  dispatch,
-  fetchNetworksAfter = true
+  dispatch
+  //fetchNetworksAfter = true
 ) => {
+  if (!(network instanceof CNN)) {
+    network = new CNN(network);
+  }
+
   dispatch(setNetworkRequest({ server, network }));
   setNetworkApi(network, server)
     .then(() => {
-      if (fetchNetworksAfter) fetchNetworks(server, dispatch);
+      //if (fetchNetworksAfter) fetchNetworks(server, dispatch);
       dispatch(setNetworkSuccess({ server, network }));
     })
     .catch((err) => dispatch(setNetworkError({ server, network, err })));

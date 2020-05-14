@@ -9,6 +9,7 @@ import {
   FETCH_NETWORK_REQUEST,
   FETCH_NETWORK_SUCCESS,
   FETCH_NETWORK_ERROR,
+  SET_NETWORK_SUCCESS,
 } from "../actions/networks";
 
 import { NetworkArchitectures } from "../../CNN-js/cnn";
@@ -46,6 +47,18 @@ export default (state = defaultState, action) => {
             {},
             state.networks[action.server.uniqueName],
             { [action.networkId]: action.network }
+          ),
+        }),
+      });
+    case SET_NETWORK_SUCCESS:
+      return Object.assign({}, state, {
+        networks: Object.assign({}, state.networks, {
+          [action.server.uniqueName]: Object.assign(
+            {},
+            state.networks[action.server.uniqueName],
+            {
+              [action.network.id]: action.network,
+            }
           ),
         }),
       });

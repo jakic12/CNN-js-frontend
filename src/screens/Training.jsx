@@ -38,45 +38,51 @@ const Column = styled.div`
 
 const round = (x, n) => parseInt(x * 10 ** n) / 10 ** n;
 
-const TrainingList = connect((state) => state)(({ data, colors, networks }) => {
-  console.log(data, colors);
-  return (
-    <>
-      <TrainingHeader {...colors}>
-        {[
-          `network`,
-          `server`,
-          `epoch`,
-          `learning rate`,
-          `error`,
-          `accuracy`,
-        ].map((c, i) => (
-          <Column key={`header_item_${i}`}>{c}</Column>
-        ))}
-      </TrainingHeader>
-      <TrainingWrapper>
-        {data.map((row, i) => (
-          <Card
-            key={`trainingList_${i}_row`}
-            {...colors}
-            to={`/training/${row.server}/${row.network}`}
-          >
-            <Column>{networks.networks[row.server][row.network].name}</Column>
-            <Column>{row.server}</Column>
-            <Column>
-              {row.epoch === `initializing`
-                ? `initializing`
-                : `${row.epoch}/${row.epochs}`}
-            </Column>
-            <Column>{round(row.learningRate, 5)}</Column>
-            <Column>{round(row.err, 5)}</Column>
-            <Column>{`${round(row.accuracy, 4) * 100}%`}</Column>
-          </Card>
-        ))}
-      </TrainingWrapper>
-    </>
-  );
-});
+const TrainingList = connect((state) => state)(
+  ({ data, colors, networks, customLinkFunction }) => {
+    console.log(data, colors);
+    return (
+      <>
+        <TrainingHeader {...colors}>
+          {[
+            `network`,
+            `server`,
+            `epoch`,
+            `learning rate`,
+            `error`,
+            `accuracy`,
+          ].map((c, i) => (
+            <Column key={`header_item_${i}`}>{c}</Column>
+          ))}
+        </TrainingHeader>
+        <TrainingWrapper>
+          {data.map((row, i) => (
+            <Card
+              key={`trainingList_${i}_row`}
+              {...colors}
+              to={
+                customLinkFunction
+                  ? customLinkFunction(row, i)
+                  : `/training/${row.server}/${row.network}`
+              }
+            >
+              <Column>{networks.networks[row.server][row.network].name}</Column>
+              <Column>{row.server}</Column>
+              <Column>
+                {row.epoch === `initializing`
+                  ? `initializing`
+                  : `${row.epoch}/${row.epochs}`}
+              </Column>
+              <Column>{round(row.learningRate, 5)}</Column>
+              <Column>{round(row.err, 5)}</Column>
+              <Column>{`${round(row.accuracy, 4) * 100}%`}</Column>
+            </Card>
+          ))}
+        </TrainingWrapper>
+      </>
+    );
+  }
+);
 
 const StartButton = styled(Link)`
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
@@ -136,14 +142,25 @@ class Training extends Component {
         <TrainingList
           data={Object.keys(this.props.training)
             .map((i) =>
-              Object.keys(this.props.training[i]).map((j) =>
-                Object.assign({}, this.props.training[i][j], {
-                  server: i,
-                  network: j,
-                })
-              )
+              i === `trained`
+                ? null
+                : Object.keys(this.props.training[i]).map((j) =>
+                    Object.assign({}, this.props.training[i][j], {
+                      server: i,
+                      network: j,
+                    })
+                  )
             )
-            .flat(1)}
+            .flat(1)
+            .filter((a) => !!a)}
+        />
+
+        <TrainingScreenTitleWrapper>
+          <Title>Training history</Title>
+        </TrainingScreenTitleWrapper>
+        <TrainingList
+          data={this.props.training.trained}
+          customLinkFunction={(_row, i) => `/training/trained/${i}`}
         />
       </TrainingScreenWrapper>
     );

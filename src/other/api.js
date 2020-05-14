@@ -29,11 +29,12 @@ const openDb = () => {
 
 const addRecord = (store_name, data) => {
   return new Promise((resolve, reject) => {
+    console.log(store_name, data);
     openDb().then((db) => {
       const tx = db
         .transaction(store_name, "readwrite")
         .objectStore(store_name)
-        .put(data);
+        .put(JSON.parse(JSON.stringify(data))); // before, it was ".put(data)" -> added because of function cloning
 
       tx.onsuccess = () => {
         resolve();

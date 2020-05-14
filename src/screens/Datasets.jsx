@@ -5,7 +5,7 @@ import { NetworkCardParent } from "../components/NetworkCard";
 import Error, { translateError } from "../components/Error";
 import ServerLogin from "../components/ServerLogin";
 import DatasetCard, { AddDatasetCard } from "../components/DatasetCard";
-import { PropagateLoader } from "react-spinners";
+import { SyncLoader } from "react-spinners";
 
 class Datasets extends React.Component {
   constructor(props) {
@@ -28,7 +28,7 @@ class Datasets extends React.Component {
           >
             {this.props.datasets.serverDatasetsLoading[server.uniqueName] && (
               <div style={{ width: `100%`, heigh: `100%` }}>
-                <PropagateLoader />
+                <SyncLoader />
               </div>
             )}
             {this.props.datasets.serverDatasetsError[server.uniqueName] &&

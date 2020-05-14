@@ -16,6 +16,7 @@ import NetworkSelect from "../components/NetworkSelect";
 import DatasetSelect from "../components/DatasetSelect";
 import { Redirect } from "react-router-dom";
 import Error from "../components/Error";
+import { setNetwork } from "../redux/actions/networks";
 
 const TrainingWrapper = styled.div`
   height: 100%;
@@ -160,14 +161,41 @@ class StartTraining extends React.Component {
                         this.state.networkServer.uniqueName
                       ][this.state.networkId]
                     ) {
-                      this.props.startTraining({
-                        server: this.state.server,
-                        network: this.props.networks.networks[
+                      // https://stackoverflow.com/questions/1584370/how-to-merge-two-arrays-in-javascript-and-de-duplicate-items
+                      function arrayUnique(array) {
+                        var a = array.concat();
+                        for (var i = 0; i < a.length; ++i) {
+                          for (var j = i + 1; j < a.length; ++j) {
+                            if (a[i] === a[j]) a.splice(j--, 1);
+                          }
+                        }
+
+                        return a;
+                      }
+
+                      const dataset = this.props.datasets.datasets[
+                        this.state.datasetServer.uniqueName
+                      ][this.state.datasetId];
+                      const network = Object.assign(
+                        this.props.networks.networks[
                           this.state.networkServer.uniqueName
                         ][this.state.networkId],
-                        dataset: this.props.datasets.datasets[
-                          this.state.datasetServer.uniqueName
-                        ][this.state.datasetId],
+                        {
+                          serializeParams: arrayUnique(
+                            (
+                              this.props.networks.networks[
+                                this.state.networkServer.uniqueName
+                              ][this.state.networkId].serializeParams || []
+                            ).concat(["labels"])
+                          ),
+                          labels: dataset.labels,
+                        }
+                      );
+                      this.props.setNetwork(network, this.state.server);
+                      this.props.startTraining({
+                        server: this.state.server,
+                        network,
+                        dataset,
                         trainingParams: this.state.trainingProps,
                       });
                       this.setState({ redirect: true });
@@ -191,6 +219,7 @@ export default connect(
       fetchNetwork(networkId, server, dispatch),
     getDataset: (datasetId, server) =>
       fetchDataset(datasetId, server, dispatch),
+    setNetwork: (network, server) => setNetwork(server, network, dispatch),
     startTraining: ({ server, network, dataset, trainingParams }) =>
       startTraining({ server, network, dataset, trainingParams, dispatch }),
   })
