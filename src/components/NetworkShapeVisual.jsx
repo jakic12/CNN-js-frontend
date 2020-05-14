@@ -10,7 +10,7 @@ import Error from "./Error";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { connect } from "react-redux";
 
-const LayerType = require("../CNN-js/cnn").LayerType;
+import { LayerType } from "../CNN-js/cnn";
 
 const WrapperCard = styled.div`
   width: 100%;
@@ -61,7 +61,7 @@ const NetworkLayerWrapper = styled.div`
     0 3px 5px -1px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
   padding: 10px;
-  background: ${props => props.backgroundbyelevation(1)};
+  background: ${(props) => props.backgroundbyelevation(1)};
 
   &:hover {
     cursor: pointer;
@@ -94,52 +94,52 @@ const getSliceSize = (
   max = maxCONVSize
 ) => ({
   w: min + normalizedLayer.w * (max - min),
-  h: min + normalizedLayer.h * (max - min)
+  h: min + normalizedLayer.h * (max - min),
 });
 
 const LAYER_STACK_slice = styled(animated.div)`
-  width: ${props => getSliceSize(props).w}em;
-  height: ${props => getSliceSize(props).h}em;
+  width: ${(props) => getSliceSize(props).w}em;
+  height: ${(props) => getSliceSize(props).h}em;
   margin: 1em;
-  background: ${props => props.backgroundbyelevation(3)};
-  border: 1px solid ${props => (props.darkMode ? `gray` : props.primarycolor)};
+  background: ${(props) => props.backgroundbyelevation(3)};
+  border: 1px solid ${(props) => (props.darkMode ? `gray` : props.primarycolor)};
   border-radius: 3px;
   position: absolute;
-  z-index: ${props => 300 - props.i};
+  z-index: ${(props) => 300 - props.i};
 `;
 const LAYER_STACK_filter_wrapper = styled(animated.div)`
-  width: ${props => getSliceSize(props).w}em;
-  height: ${props => getSliceSize(props).h}em;
+  width: ${(props) => getSliceSize(props).w}em;
+  height: ${(props) => getSliceSize(props).h}em;
   margin: 1em;
 
   position: absolute;
-  z-index: ${props => 300 - props.i};
+  z-index: ${(props) => 300 - props.i};
   display: flex;
   justify-content: center;
   flex-direction: row;
   align-items: center;
 `;
 const LAYER_STACK_FILTER_inner = styled(animated.div)`
-  width: ${props => {
+  width: ${(props) => {
     const dir = getSliceSize(props);
     return Math.min(dir.w, dir.h) * props.f;
   }}em;
-  height: ${props => {
+  height: ${(props) => {
     const dir = getSliceSize(props);
     return Math.min(dir.w, dir.h) * props.f;
   }}em;
   box-sizing: border-box;
   max-height: 100%;
   max-width: 100%;
-  background: ${props => props.backgroundbyelevation(3)};
-  border: 1px solid ${props => (props.darkMode ? `gray` : props.primarycolor)};
+  background: ${(props) => props.backgroundbyelevation(3)};
+  border: 1px solid ${(props) => (props.darkMode ? `gray` : props.primarycolor)};
   border-radius: 3px;
 `;
 const LAYER_STACK_wrapper = styled(animated.div)`
   position: relative;
 `;
-const LAYER_STACK_slice_component = connect(state => ({
-  colors: state.colors
+const LAYER_STACK_slice_component = connect((state) => ({
+  colors: state.colors,
 }))(({ layer, i, withData, layerNormalized, extended, filter, colors }) => {
   const { w: slicewidth, h: sliceheight } = getSliceSize(layerNormalized);
   const layerSliceProps = useSpring({
@@ -152,9 +152,9 @@ const LAYER_STACK_slice_component = connect(state => ({
         ? {
             left: `${i / 5}em`,
             top: `-${i / 5}em`,
-            opacity: `${Math.max(1 - i / 10, 0)}`
+            opacity: `${Math.max(1 - i / 10, 0)}`,
           }
-        : {}
+        : {},
   });
 
   const filterProps = useSpring({
@@ -162,8 +162,8 @@ const LAYER_STACK_slice_component = connect(state => ({
       ? `0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.20)`
       : `0 0px 0px 0 rgba(0,0,0,0.14), 0 0px 0px 0 rgba(0,0,0,0.12), 0 0px 0px 0px rgba(0,0,0,0.20)`,
     from: {
-      boxShadow: `0 0px 0px 0 rgba(0,0,0,0.14), 0 0px 0px 0 rgba(0,0,0,0.12), 0 0px 0px 0px rgba(0,0,0,0.20)`
-    }
+      boxShadow: `0 0px 0px 0 rgba(0,0,0,0.14), 0 0px 0px 0 rgba(0,0,0,0.12), 0 0px 0px 0px rgba(0,0,0,0.20)`,
+    },
   });
 
   if (filter) {
@@ -211,7 +211,7 @@ const LAYER_STACK = ({
   withData,
   layerNormalized,
   extended,
-  withFilter
+  withFilter,
 }) => {
   const { w: sliceWidth, h: sliceHeight } = getSliceSize(layerNormalized);
   const emPadding = 1 * 2;
@@ -226,8 +226,8 @@ const LAYER_STACK = ({
       height: `${sliceHeight + emPadding}em`,
       width: `${sliceWidth + emPadding}em`,
       marginTop: `-${(sliceHeight + emPadding) / 2}em`,
-      marginLeft: `-${(sliceWidth + emPadding) / 2}em`
-    }
+      marginLeft: `-${(sliceWidth + emPadding) / 2}em`,
+    },
   });
   return (
     <>
@@ -235,7 +235,7 @@ const LAYER_STACK = ({
         <div
           style={{
             height: 0,
-            width: 0
+            width: 0,
           }}
         >
           <LAYER_STACK_wrapper style={wrapperStyle}>
@@ -261,7 +261,7 @@ const LAYER_STACK = ({
         style={{
           height: 0,
           width: 0,
-          marginLeft: withFilter ? `${sliceHeight + emPadding}em` : ``
+          marginLeft: withFilter ? `${sliceHeight + emPadding}em` : ``,
         }}
       >
         <LAYER_STACK_wrapper style={wrapperStyle}>
@@ -288,7 +288,7 @@ const LAYER_STACK = ({
 //NETWORK LAYERS
 
 //normalize layers, normalize f as percentage of width and height minimum
-const normalizeLayers = shape => {
+const normalizeLayers = (shape) => {
   const out = normalizeData(shape, 0);
   shape.forEach((s, i) => {
     if (s.f) {
@@ -298,8 +298,8 @@ const normalizeLayers = shape => {
   return out;
 };
 
-export default connect(state => ({
-  colors: state.colors
+export default connect((state) => ({
+  colors: state.colors,
 }))(({ colors, network, small, withData }) => {
   const [extended, setExtended] = useState(
     new Array(network.shape.length).fill(false)
@@ -363,7 +363,7 @@ export default connect(state => ({
                     </NetworkFilterAndInput>
                     <LayerTypeTitle>
                       {Object.keys(LayerType).find(
-                        key => LayerType[key] === layerShape.type
+                        (key) => LayerType[key] === layerShape.type
                       )}
                     </LayerTypeTitle>
                   </NetworkLayerWrapper>

@@ -8,7 +8,7 @@ import {
   NEW_NETWORK_ERROR,
   FETCH_NETWORK_REQUEST,
   FETCH_NETWORK_SUCCESS,
-  FETCH_NETWORK_ERROR
+  FETCH_NETWORK_ERROR,
 } from "../actions/networks";
 
 import { NetworkArchitectures } from "../../CNN-js/cnn";
@@ -19,7 +19,7 @@ const defaultState = {
   error: {},
   networkLoading: {},
   networkError: {},
-  networkArchitectures: NetworkArchitectures
+  networkArchitectures: NetworkArchitectures,
 };
 
 export default (state = defaultState, action) => {
@@ -27,36 +27,36 @@ export default (state = defaultState, action) => {
     case FETCH_NETWORK_REQUEST:
       return Object.assign({}, state, {
         networkLoading: Object.assign({}, state.networkLoading, {
-          [action.server.uniqueName + action.networkId]: true
+          [action.server.uniqueName + action.networkId]: true,
         }),
         networkError: Object.assign({}, state.networkError, {
-          [action.server.uniqueName + action.networkId]: undefined
-        })
+          [action.server.uniqueName + action.networkId]: undefined,
+        }),
       });
     case FETCH_NETWORK_SUCCESS:
       return Object.assign({}, state, {
         networkLoading: Object.assign({}, state.networkLoading, {
-          [action.server.uniqueName + action.networkId]: false
+          [action.server.uniqueName + action.networkId]: false,
         }),
         networkError: Object.assign({}, state.networkError, {
-          [action.server.uniqueName + action.networkId]: undefined
+          [action.server.uniqueName + action.networkId]: undefined,
         }),
         networks: Object.assign(state.networks, {
           [action.server.uniqueName]: Object.assign(
             {},
             state.networks[action.server.uniqueName],
             { [action.networkId]: action.network }
-          )
-        })
+          ),
+        }),
       });
     case FETCH_NETWORK_ERROR:
       return Object.assign({}, state, {
         networkLoading: Object.assign({}, state.networkLoading, {
-          [action.server.uniqueName + action.networkId]: false
+          [action.server.uniqueName + action.networkId]: false,
         }),
         networkError: Object.assign({}, state.networkError, {
-          [action.server.uniqueName + action.networkId]: action.err
-        })
+          [action.server.uniqueName + action.networkId]: action.err,
+        }),
       });
     case NEW_NETWORK_REQUEST:
       return Object.assign({}, state, { isLoading: true });
@@ -68,49 +68,49 @@ export default (state = defaultState, action) => {
       return Object.assign({}, state, {
         networks: Object.assign({}, state.networks),
         isLoading: Object.assign({}, state.isLoading, {
-          [action.server.uniqueName]: true
+          [action.server.uniqueName]: true,
         }),
         error: Object.assign({}, state.error, {
-          [action.server.uniqueName]: false
+          [action.server.uniqueName]: false,
         }),
-        networkArchitectures: Object.assign({}, state.networkArchitectures)
+        networkArchitectures: Object.assign({}, state.networkArchitectures),
       });
     case FETCH_NETWORKS_SUCCESS:
       return Object.assign({}, state, {
         networks: Object.assign({}, state.networks, {
-          [action.server.uniqueName]: action.networks
+          [action.server.uniqueName]: action.networks,
         }),
         isLoading: Object.assign({}, state.isLoading, {
-          [action.server.uniqueName]: false
+          [action.server.uniqueName]: false,
         }),
         error: Object.assign({}, state.error, {
-          [action.server.uniqueName]: false
+          [action.server.uniqueName]: false,
         }),
-        networkArchitectures: Object.assign({}, state.networkArchitectures)
+        networkArchitectures: Object.assign({}, state.networkArchitectures),
       });
     case FETCH_NETWORKS_ERROR:
       return Object.assign({}, state, {
         networks: Object.assign({}, state.networks),
         isLoading: Object.assign({}, state.isLoading, {
-          [action.server.uniqueName]: false
+          [action.server.uniqueName]: false,
         }),
         error: Object.assign({}, state.error, {
-          [action.server.uniqueName]: action.error
+          [action.server.uniqueName]: action.error,
         }),
-        networkArchitectures: Object.assign({}, state.networkArchitectures)
+        networkArchitectures: Object.assign({}, state.networkArchitectures),
       });
     case UNLOAD_NETWORKS:
       return Object.assign({}, state, {
         networks: Object.assign({}, state.networks, {
-          [action.server.uniqueName]: undefined
+          [action.server.uniqueName]: undefined,
         }),
         isLoading: Object.assign({}, state.isLoading, {
-          [action.server.uniqueName]: false
+          [action.server.uniqueName]: false,
         }),
         error: Object.assign({}, state.error, {
-          [action.server.uniqueName]: false
+          [action.server.uniqueName]: false,
         }),
-        networkArchitectures: Object.assign({}, state.networkArchitectures)
+        networkArchitectures: Object.assign({}, state.networkArchitectures),
       });
     default:
       return state;

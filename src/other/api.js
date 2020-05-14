@@ -3,7 +3,7 @@ import {
   stringToUint8Array,
   uint8ArrayToString,
 } from "../CNN-js/datasetProcessor";
-const { CNN, NetworkArchitectures } = require("../CNN-js/cnn");
+import { CNN, NetworkArchitectures } from "../CNN-js/cnn";
 
 //init database
 const openDb = () => {

@@ -16,7 +16,6 @@ import NetworkCard, {
 import ServerLogin from "../components/ServerLogin";
 import Error, { translateError } from "../components/Error";
 
-import { NetworkArchitectures, CNN } from "../CNN-js/cnn";
 import { PropagateLoader } from "react-spinners";
 
 import styled from "styled-components";

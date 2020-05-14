@@ -65,7 +65,10 @@ export default class TrainingController extends WithEventListener {
   startLearning() {
     if (this.server.url === "local") {
       this.emitEvent("start");
-      this.trainingInstance = new Worker("/trainingWorker.js");
+      console.log(process.env.PUBLIC_URL);
+      this.trainingInstance = new Worker(
+        process.env.PUBLIC_URL + "/trainingWorker.js"
+      );
       this.trainingInstance.addEventListener("message", (m) => {
         this.emitEvent(m.data.event, ...[...m.data.data, m.data.network]);
       });
