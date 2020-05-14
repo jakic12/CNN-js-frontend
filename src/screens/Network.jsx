@@ -78,6 +78,7 @@ const DownloadButton = styled.div`
 
 const ImageSelect = styled.div`
   display: flex;
+  justify-content: center;
   flex-direction: row;
   align-items: center;
 `;
@@ -88,6 +89,14 @@ const UploadRoot = styled.div`
   border-radius: 5px;
   margin-right: 1em;
 `;
+
+const getDatasetLen = (dataset) => {
+  return (
+    dataset &&
+    dataset.data &&
+    dataset.data.length / (dataset.imageSize ** 2 * dataset.colorDepth + 1)
+  );
+};
 
 class Network extends Component {
   constructor(props) {
@@ -223,7 +232,10 @@ class Network extends Component {
                 </DownloadButton>
               </FlexCenter>
             </NetworkScreenTitleWrapper>
-            <NetworkShapeVisual network={this.state.network} withData={true} />
+            <NetworkShapeVisual
+              network={this.state.networkNew || this.state.network}
+              withData={false}
+            />
             <Subtitle>Classify</Subtitle>
             <ImageSelect>
               <Dropzone
@@ -288,13 +300,29 @@ class Network extends Component {
                 value={this.state.selectedDatasetIndex}
               />
               <input
-                type="text"
+                type="number"
+                min={0}
+                max={
+                  this.state.selectedDatasetIndex &&
+                  getDatasetLen(
+                    this.props.datasets.datasets[this.state.server.uniqueName][
+                      this.state.selectedDatasetIndex
+                    ]
+                  ) - 1
+                }
                 value={this.state.selectedDatasetImageIndex}
                 onChange={(e) => {
                   this.setState({
                     selectedDatasetImageIndex:
-                      parseInt(e.target.value) ||
-                      this.state.selectedDatasetImageIndex,
+                      (e.target.value || e.target.value === 0) &&
+                      e.target.value <
+                        getDatasetLen(
+                          this.props.datasets.datasets[
+                            this.state.server.uniqueName
+                          ][this.state.selectedDatasetIndex]
+                        )
+                        ? parseInt(e.target.value)
+                        : this.state.selectedDatasetImageIndex,
                     uploadedImage: null,
                   });
                 }}

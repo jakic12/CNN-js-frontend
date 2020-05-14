@@ -201,16 +201,18 @@ const LAYER_STACK_slice_component = connect((state) => ({
             w={layerNormalized.w}
             h={layerNormalized.h}
           >
-            <LayerCanvas
-              slice={layerData}
-              style={{ position: `absolute`, top: 0 }}
-              width={
-                getFilterSliceSize(sliceSizeProps, layerNormalized.f) + `em`
-              }
-              height={
-                getFilterSliceSize(sliceSizeProps, layerNormalized.f) + `em`
-              }
-            />
+            {withData && (
+              <LayerCanvas
+                slice={layerData}
+                style={{ position: `absolute`, top: 0 }}
+                width={
+                  getFilterSliceSize(sliceSizeProps, layerNormalized.f) + `em`
+                }
+                height={
+                  getFilterSliceSize(sliceSizeProps, layerNormalized.f) + `em`
+                }
+              />
+            )}
           </LAYER_STACK_FILTER_inner>
         </LAYER_STACK_filter_wrapper>
       );

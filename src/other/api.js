@@ -29,12 +29,11 @@ const openDb = () => {
 
 const addRecord = (store_name, data) => {
   return new Promise((resolve, reject) => {
-    console.log(store_name, data);
     openDb().then((db) => {
       const tx = db
         .transaction(store_name, "readwrite")
         .objectStore(store_name)
-        .put(JSON.parse(JSON.stringify(data))); // before, it was ".put(data)" -> added because of function cloning
+        .put(data);
 
       tx.onsuccess = () => {
         resolve();
@@ -120,6 +119,7 @@ export function createNetwork(name, shape, server) {
   return new Promise((resolve, reject) => {
     if (server.url === `local`) {
       const neuralNet = new CNN(shape || NetworkArchitectures.LeNet5);
+      neuralNet.serializeParams = ["id", "name"];
       const net_id = new Date().getTime();
       neuralNet.name = name || net_id;
       neuralNet.id = net_id;
@@ -280,7 +280,7 @@ export function newDataset(dataset, server) {
 export function setNetwork(network, server) {
   return new Promise((resolve, reject) => {
     if (server.url === `local`) {
-      addRecord(`networks`, network)
+      addRecord(`networks`, JSON.parse(JSON.stringify(network)))
         .then(() => resolve())
         .catch((e) => reject(e));
     } else {

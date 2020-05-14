@@ -4,7 +4,12 @@ import { connect } from "react-redux";
 
 export default connect((state) => state)((props) => {
   const items = Object.keys(props.training)
-    .map((i) => Object.keys(props.training[i]).map((j) => props.training[i][j]))
+    .map((i) => {
+      return (
+        i !== "trained" &&
+        Object.keys(props.training[i]).map((j) => props.training[i][j])
+      );
+    })
     .flat(1)
     .filter((i) => !!i);
   return items.length > 0 ? (

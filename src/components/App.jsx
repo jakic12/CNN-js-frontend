@@ -27,14 +27,14 @@ import { MdHome, MdSchool, MdPhotoLibrary } from "react-icons/md";
 import { IoMdGitNetwork } from "react-icons/io";
 
 const screens = [
-  {
+  /*{
     path: `/`,
     fullName: `Dashboard`,
     component: Dashboard,
     exact: true,
     exactLink: true,
     icon: MdHome,
-  },
+  },*/
   {
     path: `/networks`,
     fullName: `Networks`,

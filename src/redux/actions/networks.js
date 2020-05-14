@@ -138,7 +138,10 @@ export const setNetwork = (
   //fetchNetworksAfter = true
 ) => {
   if (!(network instanceof CNN)) {
-    network = new CNN(network);
+    network = Object.assign(new CNN(network), {
+      id: network.id,
+      name: network.name,
+    });
   }
 
   dispatch(setNetworkRequest({ server, network }));

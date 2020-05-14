@@ -270,7 +270,7 @@ export const AddDatasetCard = connect(
               <LeftRight>
                 <LeftRightChild>
                   <Dropzone
-                    accept={".jpg,.png"}
+                    accept={".bin"}
                     onDrop={(acceptedFiles) => {
                       acceptedFiles.forEach((file) => {
                         setFileName(file.name);
@@ -340,6 +340,7 @@ export const AddDatasetCard = connect(
                 <LeftRightChild>
                   <StyledTextAreaWrapper>
                     <StyledTextArea
+                      placeholder="Paste labels here, labels should be separated by a newline"
                       onChange={(e) => setLabels(e.target.value)}
                     ></StyledTextArea>
                   </StyledTextAreaWrapper>

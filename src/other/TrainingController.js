@@ -65,7 +65,6 @@ export default class TrainingController extends WithEventListener {
   startLearning() {
     if (this.server.url === "local") {
       this.emitEvent("start");
-      console.log(process.env.PUBLIC_URL);
       this.trainingInstance = new Worker(
         process.env.PUBLIC_URL + "/trainingWorker.js"
       );
@@ -86,7 +85,9 @@ export default class TrainingController extends WithEventListener {
 
   confusionMatrix() {
     this.emitEvent("confusionMatrixStart");
-    this.trainingInstance = new Worker("/trainingWorker.js");
+    this.trainingInstance = new Worker(
+      process.env.PUBLIC_URL + "/trainingWorker.js"
+    );
     this.trainingInstance.addEventListener("message", (m) => {
       this.emitEvent(m.data.event, m.data.data);
     });
