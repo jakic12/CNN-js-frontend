@@ -25,6 +25,7 @@ import { connect } from "react-redux";
 // resources
 import { MdHome, MdSchool, MdPhotoLibrary } from "react-icons/md";
 import { IoMdGitNetwork } from "react-icons/io";
+import Dataset from "../screens/Dataset";
 
 const screens = [
   /*{
@@ -50,6 +51,10 @@ const screens = [
     component: Datasets,
     exact: true,
     icon: MdPhotoLibrary,
+  },
+  {
+    path: `/datasets/:serverUniqueName/:datasetId`,
+    component: Dataset,
   },
   {
     path: `/networks/:serverUniqueName/:networkId`,

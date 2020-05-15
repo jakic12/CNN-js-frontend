@@ -96,7 +96,7 @@ export default connect((state) => state)(
 
     return (
       <Wrapper
-        to={onClick ? "" : `/dataset/${serverId}/${dataset.id}`}
+        to={onClick ? "" : `/datasets/${serverId}/${dataset.id}`}
         onClick={onClick}
         ref={getRef && ((ref) => getRef(ref))}
         {...colors}
