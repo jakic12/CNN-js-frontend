@@ -5,6 +5,10 @@ import {
 } from "../CNN-js/datasetProcessor";
 import { CNN, NetworkArchitectures } from "../CNN-js/cnn";
 
+window.deleteDatabase = () => {
+  window.indexedDB.deleteDatabase("CNNjs-localStore");
+};
+
 //init database
 const openDb = () => {
   return new Promise((resolve, reject) => {
@@ -286,5 +290,36 @@ export function setNetwork(network, server) {
     } else {
       //TODO: newDataset on server
     }
+  });
+}
+
+export function getDemoNetwork() {
+  return new Promise((resolve) => {
+    fetch(process.env.PUBLIC_URL + `/Cifar-10-LeNet5.cnn`)
+      .then((res) => res.json())
+      .then((res) => {
+        resolve(res);
+      });
+  });
+}
+
+export function getDemoDatasets() {
+  return new Promise((resolve, reject) => {
+    fetch(process.env.PUBLIC_URL + `/datasets_metadata.json`)
+      .then((res) => res.json())
+      .then((metadata) => {
+        let responded = 0;
+        metadata.forEach((m, i) => {
+          fetch(process.env.PUBLIC_URL + `/` + m.name + ".bin")
+            .then((res) => res.arrayBuffer())
+            .then((dataset) => {
+              metadata[i].data = new Uint8Array(dataset);
+              responded++;
+              if (responded === metadata.length)
+                resolve(metadata.filter((e) => e.data));
+            })
+            .catch((e) => reject(e));
+        });
+      });
   });
 }

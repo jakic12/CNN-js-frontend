@@ -93,6 +93,7 @@ const AnimFSC = ({
             startComputedStyle["border-top-style"],
           borderWidth: `0px`,
           opacity: 1,
+          overflow: `hidden`,
         },
     config: closing ? { ...config.gentle, clamp: true } : config.gentle,
     onRest: () => {

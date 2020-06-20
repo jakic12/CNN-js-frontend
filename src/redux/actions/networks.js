@@ -3,6 +3,7 @@ import {
   createNetwork,
   getNetwork,
   setNetwork as setNetworkApi,
+  getDemoNetwork,
 } from "../../other/api";
 
 import { CNN } from "../../CNN-js/cnn";
@@ -95,8 +96,11 @@ export const networkError = ({ server, networkId, err }) => ({
 export const fetchNetworks = (server, dispatch) => {
   dispatch(requestNetworks({ server }));
   getNetworks(server)
-    .then((networks) => {
+    .then(async (networks) => {
       Object.keys(networks).forEach((n) => (networks[n].reduced = true));
+      if (Object.keys(networks).length === 0) {
+        setNetwork(server, await getDemoNetwork(), dispatch);
+      }
       dispatch(networksSuccess({ networks, server }));
     })
     .catch((err) => dispatch(networksError({ err, server })));

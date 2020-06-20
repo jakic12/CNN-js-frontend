@@ -25,17 +25,18 @@ import { connect } from "react-redux";
 // resources
 import { MdHome, MdSchool, MdPhotoLibrary } from "react-icons/md";
 import { IoMdGitNetwork } from "react-icons/io";
+import { FaQuestion } from "react-icons/fa";
 import Dataset from "../screens/Dataset";
 
 const screens = [
-  /*{
+  {
     path: `/`,
-    fullName: `Dashboard`,
-    component: Dashboard,
     exact: true,
     exactLink: true,
-    icon: MdHome,
-  },*/
+    component: Dashboard,
+    fullName: `About`,
+    icon: FaQuestion,
+  },
   {
     path: `/networks`,
     fullName: `Networks`,

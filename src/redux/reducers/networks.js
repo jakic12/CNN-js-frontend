@@ -20,7 +20,7 @@ const defaultState = {
   error: {},
   networkLoading: {},
   networkError: {},
-  networkArchitectures: NetworkArchitectures,
+  networkArchitectures: { LeNet5Color: NetworkArchitectures.LeNet5Color },
 };
 
 export default (state = defaultState, action) => {

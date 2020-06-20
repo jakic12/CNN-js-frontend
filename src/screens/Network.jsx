@@ -345,11 +345,16 @@ class Network extends Component {
               server={this.state.server}
               rawData={(() => {
                 if (this.state.selectedDatasetIndex) {
-                  const inputArray = openDatasetFromBuffer(
+                  const inputDataset = openDatasetFromBuffer(
                     this.props.datasets.datasets[this.state.server.uniqueName][
                       this.state.selectedDatasetIndex
                     ].data
-                  )[this.state.selectedDatasetImageIndex].input;
+                  );
+
+                  const inputArray =
+                    inputDataset[this.state.selectedDatasetImageIndex].input;
+
+                  //debugger;
 
                   const datasetProps = this.props.datasets.datasets[
                     this.state.server.uniqueName

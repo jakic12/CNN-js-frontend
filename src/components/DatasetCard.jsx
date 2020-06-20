@@ -133,7 +133,6 @@ const AddDatasetWrapper = styled.div`
 const InnerDatasetSelect = styled.div`
   border-radius: 5px;
   padding: 1em;
-  overflow: hidden;
 `;
 
 const Title = styled.h3`
@@ -376,7 +375,7 @@ export const AddDatasetCard = connect(
                                 ),
                           vectorize: true,
                           normalizeMax,
-                          labels: labels.split("\n"),
+                          labels: labels && labels.split("\n"),
                         },
                         server
                       );

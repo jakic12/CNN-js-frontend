@@ -1,0 +1,4 @@
+[
+	{"id":"d1589714186016","name":"c10-train","imageSize":32,"colorDepth":3,"vectorize":true,"normalizeMax":255,"labels":["airplane","car","bird","cat","deer","dog","frog","horse","ship","truck"],"full":true},
+	{"id":"d1589796751768","name":"c10-test","imageSize":32,"colorDepth":3,"vectorize":true,"normalizeMax":255,"labels":["airplane","car","bird","cat","deer","dog","frog","horse","ship","truck"],"full":true}
+]

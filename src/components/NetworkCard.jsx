@@ -155,7 +155,7 @@ export default connect((state) => state)(
       >
         <NetworkImageDiv>
           <NetworkImage
-            src="https://cdn3.iconfinder.com/data/icons/various-networks/64/backpropagation_neural_network-512.png"
+            src={process.env.PUBLIC_URL + `/cnn-diagram.png`}
             alt="neural network icon"
           />
         </NetworkImageDiv>
@@ -267,7 +267,7 @@ export const AddNetworkCard = connect((state) => state)(
                 return <option value={i}>{name}</option>;
               })}
             </select>
-            <StyledSubmit type="submit" />
+            <StyledSubmit type="submit" value="create network" />
           </StyledForm>
         )}
         {!show && <TiPlus color={colors.primaryColor} />}

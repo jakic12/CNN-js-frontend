@@ -2,6 +2,7 @@ import {
   getDatasets,
   getDataset,
   newDataset as apiNewDataset,
+  getDemoDatasets,
 } from "../../other/api";
 
 export const FETCH_REDUCED_DATASETS_REQUEST = `FETCH_REDUCED_DATASETS_REQUEST`;
@@ -74,10 +75,15 @@ export const datasetError = ({ err, datasetId, server }) => ({
 export const fetchDatasets = (server, dispatch) => {
   dispatch(requestDatasets({ server }));
   getDatasets(server)
-    .then((datasets) => {
+    .then(async (datasets) => {
       Object.keys(datasets).forEach((datasetId) => {
         if (!datasets[datasetId].full) datasets[datasetId].reduced = true;
       });
+
+      if (Object.keys(datasets).length === 0) {
+        const demos = await getDemoDatasets();
+        demos.forEach((d) => newDataset(d, server, dispatch));
+      }
 
       dispatch(
         datasetsSuccess({
