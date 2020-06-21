@@ -25,7 +25,7 @@ const StyledData = styled.td`
 const StyledDataFlipped = styled.td`
   text-align: center;
   color: ${(props) => props.textcolor};
-  transform: rotate(-90deg);
+  /*transform: rotate(-90deg);*/
   height: 5em;
 `;
 const StyledDataStart = styled.td`
@@ -112,10 +112,11 @@ export default connect((state) => state)(
         instance.confusionMatrix();
       }
     }, [updateVar]);
+    console.log(stats);
     return cm && stats ? (
       <TableContainer {...colors}>
         <TableMenuTop>
-          predicted{loading ? `(recalculating...)` : ``}
+          predicted{loading ? ` (recalculating...)` : ``}
         </TableMenuTop>
         <TableMenuRestBottom>
           <TableMenuLeft>actual</TableMenuLeft>
@@ -127,14 +128,23 @@ export default connect((state) => state)(
                   {labels.map((l) => (
                     <StyledDataFlipped {...colors}>{l}</StyledDataFlipped>
                   ))}
+                  <StyledData {...colors} opacity={0}></StyledData>
+                  {stats &&
+                    Object.keys(stats.actual[0]).map((key) => (
+                      <StyledDataFlipped {...colors}>{key}</StyledDataFlipped>
+                    ))}
+                  <StyledDataFlipped {...colors}>accuracy</StyledDataFlipped>
                 </StyledRow>
               )}
               {cm.map((row, i) => (
                 <StyledRow>
-                  {labels && (
+                  {labels && ( //label
                     <StyledDataStart {...colors}>{labels[i]}</StyledDataStart>
                   )}
-                  {row.map((predictedCount, j) =>
+                  {row.map((
+                    predictedCount,
+                    j //data
+                  ) =>
                     i === j ? (
                       <StyledCenterData
                         {...colors}
@@ -148,8 +158,33 @@ export default connect((state) => state)(
                       </StyledData>
                     )
                   )}
+                  <StyledData {...colors} opacity={0}></StyledData>
+                  {" " /* spacer */}
+                  {stats.actual &&
+                    stats.actual[i] &&
+                    Object.keys(stats.actual[i]).map((statName) => (
+                      <StyledData {...colors} opacity={0}>
+                        {parseInt(stats.actual[i][statName] * 100) + `%`}
+                      </StyledData>
+                    ))}
                 </StyledRow>
               ))}
+              <StyledRow>
+                <StyledData {...colors} opacity={0}></StyledData>
+              </StyledRow>
+              <StyledRow>
+                <StyledDataStart {...colors}>average</StyledDataStart>
+                {cm[0].map((_) => (
+                  <StyledData {...colors} opacity={0}></StyledData>
+                ))}
+                <StyledData {...colors} opacity={0}></StyledData>
+                {stats.avg &&
+                  Object.keys(stats.avg).map((statName) => (
+                    <StyledData {...colors} opacity={0}>
+                      {parseInt(stats.avg[statName] * 100) + `%`}
+                    </StyledData>
+                  ))}
+              </StyledRow>
             </StyledTable>
           </TableRest>
         </TableMenuRestBottom>

@@ -7,6 +7,8 @@ import { IoMdGitNetwork } from "react-icons/io";
 import { Link, Redirect } from "react-router-dom";
 import SpringButton from "../components/SpringButton";
 
+import { AiFillGithub } from "react-icons/ai";
+
 const DashboardWrapper = styled.div`
   padding: 1em;
 `;
@@ -113,6 +115,14 @@ export default connect(
           }}
         />
       </GoBanner>
+      <p>
+        Made by{" "}
+        <a href="https://github.com/jakic12">
+          <AiFillGithub />
+          Jakob Drusany
+        </a>
+        .<br /> Mentored by prof. Boštjan Vouk.
+      </p>
       <h1>Written instructions</h1>
       <ol>
         <h3>

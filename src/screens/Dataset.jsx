@@ -302,41 +302,18 @@ class Dataset extends Component {
               </LeftRightChild>
               <LeftRightChild>
                 {this.state.selectedNetwork && (
-                  <LeftRight>
-                    <LeftRightChild>
-                      <ConfusionMatrix
-                        updateVar={this.state.selectedNetwork}
-                        network={
-                          this.props.networks.networks[
-                            this.state.selectedNetworkServer.uniqueName
-                          ][this.state.selectedNetwork]
-                        }
-                        dataset={this.state.dataset}
-                        statsCallback={(confusionStats) =>
-                          this.setState({ confusionStats })
-                        }
-                      />
-                    </LeftRightChild>
-                    <LeftRightChild>
-                      {this.state.confusionStats && (
-                        <Table
-                          data={
-                            Object.keys(this.state.confusionStats.avg).reduce(
-                              (prev, current) =>
-                                Object.assign(prev, {
-                                  [current]: `${round(
-                                    this.state.confusionStats.avg[current] *
-                                      100,
-                                    2
-                                  )}%`,
-                                }),
-                              {}
-                            ) || {}
-                          }
-                        />
-                      )}
-                    </LeftRightChild>
-                  </LeftRight>
+                  <ConfusionMatrix
+                    updateVar={this.state.selectedNetwork}
+                    network={
+                      this.props.networks.networks[
+                        this.state.selectedNetworkServer.uniqueName
+                      ][this.state.selectedNetwork]
+                    }
+                    dataset={this.state.dataset}
+                    statsCallback={(confusionStats) =>
+                      this.setState({ confusionStats })
+                    }
+                  />
                 )}
               </LeftRightChild>
             </LeftRight>

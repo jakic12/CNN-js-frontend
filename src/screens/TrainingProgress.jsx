@@ -216,59 +216,32 @@ class TrainingProgress extends React.Component {
                             `accuracy`,
                           ]}
                         />
+                        {!trained && (
+                          <ButtonWithConfirmation
+                            color={this.props.colors.errorcolor}
+                            textcolor={`white`}
+                            text={`stop learning`}
+                            onConfirm={() =>
+                              this.props.training[serverName][
+                                networkId
+                              ].trainingInstance.terminate()
+                            }
+                          />
+                        )}
                       </TopBottomChild>
                       <TopBottomChild>
-                        <LeftRight>
-                          <LeftRightChild style={{ paddingRight: `0.5em` }}>
-                            <ConfusionMatrix
-                              updateVar={trainingData.epoch}
-                              network={
-                                this.props.networks.networks[serverName][
-                                  networkId
-                                ]
-                              }
-                              dataset={
-                                this.props.datasets.datasets[serverName][
-                                  trainingData.dataset.id
-                                ]
-                              }
-                              statsCallback={(stats) =>
-                                this.setState({ stats })
-                              }
-                            />
-                          </LeftRightChild>
-                          <LeftRightChild style={{ paddingLeft: `0.5em` }}>
-                            <Table
-                              data={
-                                (this.state.stats &&
-                                  this.state.stats.avg &&
-                                  Object.keys(this.state.stats.avg).reduce(
-                                    (prev, current) =>
-                                      Object.assign(prev, {
-                                        [current]: `${round(
-                                          this.state.stats.avg[current] * 100,
-                                          2
-                                        )}%`,
-                                      }),
-                                    {}
-                                  )) ||
-                                {}
-                              }
-                            />
-                            {!trained && (
-                              <ButtonWithConfirmation
-                                color={this.props.colors.errorcolor}
-                                textcolor={`white`}
-                                text={`stop learning`}
-                                onConfirm={() =>
-                                  this.props.training[serverName][
-                                    networkId
-                                  ].trainingInstance.terminate()
-                                }
-                              />
-                            )}
-                          </LeftRightChild>
-                        </LeftRight>
+                        <ConfusionMatrix
+                          updateVar={trainingData.epoch}
+                          network={
+                            this.props.networks.networks[serverName][networkId]
+                          }
+                          dataset={
+                            this.props.datasets.datasets[serverName][
+                              trainingData.dataset.id
+                            ]
+                          }
+                          statsCallback={(stats) => this.setState({ stats })}
+                        />
                       </TopBottomChild>
                     </TopBottom>
                   </LeftRightChild>
