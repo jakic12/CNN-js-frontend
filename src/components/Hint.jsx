@@ -65,8 +65,6 @@ const Hint = ({
     };
   });
 
-  console.log(ref);
-
   if (ref) {
     const pos = ref.getBoundingClientRect();
 

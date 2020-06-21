@@ -121,7 +121,7 @@ export default connect(
           <AiFillGithub />
           Jakob Drusany
         </a>
-        .<br /> Mentored by prof. Boštjan Vouk.
+        .<br /> Mentored by mag. Boštjan Vouk.
       </p>
       <h1>Written instructions</h1>
       <ol>
