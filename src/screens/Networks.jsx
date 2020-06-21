@@ -138,9 +138,10 @@ class Networks extends Component {
                     <>
                       {Object.keys(
                         this.props.networks.networks[server.uniqueName]
-                      ).map((id) => {
+                      ).map((id, i) => {
                         return (
                           <NetworkCard
+                            id={i === 0 && `firstNetworkHint`}
                             network={
                               this.props.networks.networks[server.uniqueName][
                                 id
@@ -152,6 +153,7 @@ class Networks extends Component {
                         );
                       })}
                       <AddNetworkCard
+                        id={`hint0`}
                         onclick={(name, shape) => {
                           this.props.createNewNetwork(name, shape, server);
                         }}

@@ -81,7 +81,7 @@ const NetworkImageDiv = styled.div`
 `;
 
 export default connect((state) => state)(
-  ({ colors, network, server, draggable, onClick, getRef }) => {
+  ({ colors, network, server, draggable, onClick, getRef, id }) => {
     /*
     // draggable too buggy
     const [dragging, setDragging] = useState(false);
@@ -94,6 +94,7 @@ export default connect((state) => state)(
 
     return (
       <Wrapper
+        id={id}
         to={onClick ? "" : `/networks/${server}/${network.id}`}
         onClick={onClick}
         {...colors}
@@ -218,20 +219,27 @@ const InputRow = styled.div`
 const StyledInput = styled.input`
   padding: 5px;
   box-sizing: border-box;
-  border-radius: 5px;
+  /*border-radius: 5px;*/
   border: none;
   width: calc(100% - 5em);
   margin: 1em;
+  border-bottom: 1px solid black;
+`;
+
+const StyledSelect = styled.select`
+  border: none;
+  padding: 0.3em;
 `;
 
 export const AddNetworkCard = connect((state) => state)(
-  ({ colors, onclick, networks }) => {
+  ({ colors, onclick, networks, id }) => {
     const [name, setName] = useState(``);
     const [networkShapeIndex, setNetworkShapeIndex] = useState(0);
     const [show, setShow] = useState(false);
 
     return (
       <AddNetworkWrapper
+        id={id}
         color={colors.primaryColor}
         backgroundbyelevation={colors.backgroundbyelevation}
         onClick={() => setShow(true)}
@@ -259,15 +267,19 @@ export const AddNetworkCard = connect((state) => state)(
               onChange={(evt) => setName(evt.target.value)}
               placeholder={`Network name`}
             />
-            <select
+            <StyledSelect
               onChange={(e) => setNetworkShapeIndex(JSON.parse(e.target.value))}
               value={networkShapeIndex}
             >
               {Object.keys(networks.networkArchitectures).map((name, i) => {
                 return <option value={i}>{name}</option>;
               })}
-            </select>
-            <StyledSubmit type="submit" value="create network" />
+            </StyledSelect>
+            <StyledSubmit
+              type="submit"
+              value="create network"
+              id={`createNetworkHint`}
+            />
           </StyledForm>
         )}
         {!show && <TiPlus color={colors.primaryColor} />}

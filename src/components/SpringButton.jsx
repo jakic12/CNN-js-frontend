@@ -5,7 +5,7 @@ import { useSpring, animated, config } from "react-spring";
 import styled from "styled-components";
 
 const SpringButtonStyled = styled(animated.div)`
-  width: 100%;
+  width: ${(props) => (props.shrinkToContent ? `auto` : `100%`)};
   padding: 1em;
   background: ${(props) => props.color};
   color: ${(props) => props.textColor};
@@ -19,7 +19,14 @@ const SpringButtonStyled = styled(animated.div)`
   }
 `;
 
-const SpringButton = ({ color, textColor, text, onClick }) => {
+const SpringButton = ({
+  color,
+  textColor,
+  text,
+  onClick,
+  shrinkToContent,
+  id,
+}) => {
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
 
@@ -34,6 +41,7 @@ const SpringButton = ({ color, textColor, text, onClick }) => {
 
   return (
     <SpringButtonStyled
+      id={id}
       style={buttonStyle}
       color={color}
       textColor={textColor}
@@ -46,6 +54,7 @@ const SpringButton = ({ color, textColor, text, onClick }) => {
         if (onClick) onClick(e);
         setClicked(true);
       }}
+      shrinkToContent={shrinkToContent}
     >
       {text}
     </SpringButtonStyled>

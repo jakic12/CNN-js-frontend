@@ -25,6 +25,7 @@ const SelectableBigDatasetList = ({
   datasets,
   onSelect,
   refreshFunction,
+  firstId,
 }) => {
   const [selected, select] = React.useState(false);
   const [serversWithError, setServersWithError] = React.useState({});
@@ -62,6 +63,7 @@ const SelectableBigDatasetList = ({
               Object.keys(datasets.datasets[server.uniqueName]).map(
                 (datasetId, j) => (
                   <DatasetCard
+                    id={j === 0 && firstId}
                     key={`dataset_sectioned_${j}`}
                     dataset={datasets.datasets[server.uniqueName][datasetId]}
                     onClick={() => {

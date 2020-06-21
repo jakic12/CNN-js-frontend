@@ -91,11 +91,12 @@ const DatasetTitle = styled.h4`
 `;
 
 export default connect((state) => state)(
-  ({ colors, dataset, serverId, onClick, getRef }) => {
+  ({ colors, dataset, serverId, onClick, getRef, id }) => {
     const Wrapper = onClick ? CardWrapperNoLink : CardWrapper;
 
     return (
       <Wrapper
+        id={id}
         to={onClick ? "" : `/datasets/${serverId}/${dataset.id}`}
         onClick={onClick}
         ref={getRef && ((ref) => getRef(ref))}

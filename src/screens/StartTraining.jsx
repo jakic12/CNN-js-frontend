@@ -103,6 +103,7 @@ class StartTraining extends React.Component {
               <TwoPartVerticalChild>
                 <Title>Network</Title>
                 <NetworkSelect
+                  id={`trainingNetworkSelectHint`}
                   onNetworkSelect={(server, networkId) => {
                     if (
                       this.props.networks.networks[server.uniqueName][networkId]
@@ -121,6 +122,7 @@ class StartTraining extends React.Component {
               <TwoPartVerticalChild>
                 <Title>Dataset</Title>
                 <DatasetSelect
+                  id={`trainingDatasetSelectHint`}
                   onDatasetSelect={(server, datasetId) => {
                     if (
                       this.props.datasets.datasets[server.uniqueName][datasetId]
@@ -148,6 +150,7 @@ class StartTraining extends React.Component {
 
             <StartTrainingButtonWrapper>
               <SpringButton
+                id={`startTrainingHint`}
                 text={`Start Training`}
                 color={this.props.colors.primarycolor}
                 textColor={this.props.colors.primarytextcolor}

@@ -268,38 +268,43 @@ class Network extends Component {
                 )}
               </Dropzone>
               <div style={{ padding: `1em` }}>or</div>
-              <Dropdown
-                placeholder="Select a dataset"
-                options={(() => {
-                  const out = Object.keys(this.props.datasets.datasets).map(
-                    (s) => ({
-                      type: `group`,
-                      name: s,
-                      items: Object.keys(this.props.datasets.datasets[s]).map(
-                        (dId) => ({
-                          value: dId,
-                          label:
-                            this.props.datasets.datasets[s][dId].name +
-                            ` (${
-                              this.props.datasets.datasets[s][dId].data.length /
-                              (this.props.datasets.datasets[s][dId].imageSize **
-                                2 *
-                                this.props.datasets.datasets[s][dId]
-                                  .colorDepth +
-                                1)
-                            })`,
-                        })
-                      ),
-                    })
-                  );
-                  return out;
-                })()}
-                onChange={(v) => {
-                  this.setState({ selectedDatasetIndex: v.value });
-                }}
-                value={this.state.selectedDatasetIndex}
-              />
+              <div id={`datasetSelectHint`}>
+                <Dropdown
+                  placeholder="Select a dataset"
+                  options={(() => {
+                    const out = Object.keys(this.props.datasets.datasets).map(
+                      (s) => ({
+                        type: `group`,
+                        name: s,
+                        items: Object.keys(this.props.datasets.datasets[s]).map(
+                          (dId) => ({
+                            value: dId,
+                            label:
+                              this.props.datasets.datasets[s][dId].name +
+                              ` (${
+                                this.props.datasets.datasets[s][dId].data
+                                  .length /
+                                (this.props.datasets.datasets[s][dId]
+                                  .imageSize **
+                                  2 *
+                                  this.props.datasets.datasets[s][dId]
+                                    .colorDepth +
+                                  1)
+                              })`,
+                          })
+                        ),
+                      })
+                    );
+                    return out;
+                  })()}
+                  onChange={(v) => {
+                    this.setState({ selectedDatasetIndex: v.value });
+                  }}
+                  value={this.state.selectedDatasetIndex}
+                />
+              </div>
               <input
+                id={`imageIndexHint`}
                 type="number"
                 min={0}
                 max={

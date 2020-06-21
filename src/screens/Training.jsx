@@ -39,7 +39,7 @@ const Column = styled.div`
 const round = (x, n) => parseInt(x * 10 ** n) / 10 ** n;
 
 const TrainingList = connect((state) => state)(
-  ({ data, colors, networks, customLinkFunction }) => {
+  ({ data, colors, networks, customLinkFunction, id }) => {
     console.log(data, colors);
     return (
       <>
@@ -58,6 +58,7 @@ const TrainingList = connect((state) => state)(
         <TrainingWrapper>
           {data.map((row, i) => (
             <Card
+              id={i === 0 && id + `First`}
               key={`trainingList_${i}_row`}
               {...colors}
               to={
@@ -133,13 +134,18 @@ class Training extends Component {
         <TrainingScreenTitleWrapper>
           <Title>Currently training</Title>
           <FlexCenter>
-            <StartButton to={`startTraining`} {...this.props.colors}>
+            <StartButton
+              to={`startTraining`}
+              {...this.props.colors}
+              id={`trainANetworkHint`}
+            >
               train a network
             </StartButton>
           </FlexCenter>
         </TrainingScreenTitleWrapper>
 
         <TrainingList
+          id={`hintTraining`}
           data={Object.keys(this.props.training)
             .map((i) =>
               i === `trained`

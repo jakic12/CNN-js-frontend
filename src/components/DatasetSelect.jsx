@@ -63,6 +63,7 @@ const DatasetSelect = ({
   datasets,
   getDatasets,
   onDatasetSelect, //(server, networkId) => {}
+  id,
 }) => {
   const [selectedId, selectId] = useState();
   const [open, setOpen] = useState(false);
@@ -75,10 +76,15 @@ const DatasetSelect = ({
   }, []);
 
   return (
-    <DatasetSelectWrapper onClick={() => setOpen(true)}>
+    <DatasetSelectWrapper>
       {(!selectedId || open) && (
         <>
-          <SelectDatasetWrapper {...colors} ref={(ref) => setWrapperRef(ref)}>
+          <SelectDatasetWrapper
+            onClick={() => setOpen(true)}
+            {...colors}
+            ref={(ref) => setWrapperRef(ref)}
+            id={id}
+          >
             Select dataset
           </SelectDatasetWrapper>
           {open && (
@@ -92,6 +98,7 @@ const DatasetSelect = ({
                 return (
                   <InnerNoOverflow>
                     <SelectableBigDatasetList
+                      firstId={id + `First`}
                       servers={servers}
                       datasets={datasets}
                       onSelect={(server, datasetId) => {

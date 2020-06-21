@@ -64,6 +64,7 @@ const Sidebar = ({ colors, screens, structure }) => {
             return (
               <>
                 <SidebarItemLink
+                  id={screen.sidebarId}
                   to={screen.path}
                   {...colors}
                   exact={screen.exactLink}

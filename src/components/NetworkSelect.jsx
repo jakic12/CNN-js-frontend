@@ -64,6 +64,7 @@ const NetworkSelect = ({
   getNetworks,
   getNetwork,
   onNetworkSelect, //(server, networkId) => {}
+  id,
 }) => {
   const [selectedId, selectId] = useState();
   const [open, setOpen] = useState(false);
@@ -76,10 +77,16 @@ const NetworkSelect = ({
   }, []);
 
   return (
-    <NetworkSelectWrapper onClick={() => setOpen(true)}>
+    <NetworkSelectWrapper>
       {(!selectedId || open) && (
         <>
-          <SelectNetworkWrapper {...colors} ref={(ref) => setWrapperRef(ref)}>
+          <SelectNetworkWrapper
+            onClick={() => setOpen(true)}
+            id={id}
+            {...colors}
+            ref={(ref) => setWrapperRef(ref)}
+            id={id}
+          >
             Select network
           </SelectNetworkWrapper>
           {open && (
@@ -93,6 +100,7 @@ const NetworkSelect = ({
                 return (
                   <InnerNoOverflow>
                     <SelectableBigNetworkList
+                      lastId={id + `Last`}
                       servers={servers}
                       networks={networks}
                       onSelect={(server, networkId) => {

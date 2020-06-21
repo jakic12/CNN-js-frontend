@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 
 import { MdSchool, MdPhotoLibrary } from "react-icons/md";
 import { IoMdGitNetwork } from "react-icons/io";
+import { Link, Redirect } from "react-router-dom";
+import SpringButton from "../components/SpringButton";
 
 const DashboardWrapper = styled.div`
   padding: 1em;
@@ -21,7 +23,7 @@ const CenterChild = styled.div`
   justify-content: center;
 `;
 
-const SidebarItemLink = styled.a`
+const SidebarItemLink = styled(Link)`
   position: relative;
   display: inline-flex;
   flex-direction: row;
@@ -45,7 +47,7 @@ const TabLink = connect((state) => state)(({ colors, tab }) => {
   };
   return (
     <>
-      <SidebarItemLink href={`/#/` + tab} {...colors}>
+      <SidebarItemLink to={tab} {...colors}>
         <div style={{ paddingRight: `0.5em` }}>
           {tab === `datasets` && <MdPhotoLibrary style={iconStyle} />}
           {tab === `networks` && (
@@ -61,106 +63,144 @@ const TabLink = connect((state) => state)(({ colors, tab }) => {
   );
 });
 
-export default () => (
-  <DashboardWrapper>
-    <h1>CNNjs demo</h1>
-    <p>
-      This is a demo that can train a Convolutional neural network in your
-      browser, using a{" "}
-      <a href="https://github.com/jakic12/CNN-js">training library</a> I made
-      for javascript. You can upload your own dataset or use a reduced version
-      of the <a href="https://www.cs.toronto.edu/~kriz/cifar.html">cifar-10</a>{" "}
-      dataset already provided with the demo. You can also upload images and
-      test the network from your browser. The trained network can be exported as
-      json for further use.
-    </p>
-    <h1>How to use it</h1>
-    <ol>
-      <h3>
-        <li>Network</li>
-      </h3>
-      <p>
-        First create a network on the <TabLink tab={`networks`} /> tab that we
-        will use for training.
-      </p>
+const GoBanner = styled.div`
+  height: 20vh;
+  width: 100%;
 
-      <CenterChild>
-        <CenterImage
-          src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_1.jpg`}
-          alt="creating a network"
-        />
-      </CenterChild>
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
-      <h3>
-        <li>Dataset</li>
-      </h3>
+export default connect(
+  (state) => state,
+  (dispatch) => ({
+    startHints: () => dispatch({ type: "SET_HINT", hintId: 0 }),
+    stopHints: () => dispatch({ type: "SET_HINT", hintId: -1 }),
+  })
+)(({ startHints, hints, stopHints }) => {
+  const [redirectToNetworks, setRedirectToNetworks] = React.useState(false);
+
+  return (
+    <DashboardWrapper>
+      {redirectToNetworks && hints.hintId === 0 && <Redirect to={`networks`} />}
+      <h1>CNNjs demo</h1>
       <p>
-        If you want to use your own dataset, you can upload it on the{" "}
-        <TabLink tab={`datasets`} /> tab. If not, there is a sample of the{" "}
+        This is a demo that can train a Convolutional neural network in your
+        browser, using a{" "}
+        <a href="https://github.com/jakic12/CNN-js">training library</a> I made
+        for javascript. You can upload your own dataset or use a reduced version
+        of the{" "}
         <a href="https://www.cs.toronto.edu/~kriz/cifar.html">cifar-10</a>{" "}
-        dataset already provided.
+        dataset already provided with the demo. You can also upload images and
+        test the network from your browser. The trained network can be exported
+        as json for further use.
       </p>
-
-      <CenterChild>
-        <CenterImage
-          src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_3.jpg`}
-          alt="uploading a dataset"
-          width="80%"
+      <GoBanner>
+        <SpringButton
+          shrinkToContent={true}
+          text={hints.hintId > -1 ? `Stop the tutorial` : `Start the tutorial`}
+          textColor={`white`}
+          color={`#dd2683`}
+          onClick={() => {
+            if (hints.hintId > -1) {
+              stopHints();
+              setRedirectToNetworks(false);
+            } else {
+              startHints();
+              setRedirectToNetworks(true);
+            }
+          }}
         />
-      </CenterChild>
+      </GoBanner>
+      <h1>Written instructions</h1>
+      <ol>
+        <h3>
+          <li>Network</li>
+        </h3>
+        <p>
+          First create a network on the <TabLink tab={`networks`} /> tab that we
+          will use for training.
+        </p>
 
-      <h3>
-        <li>Training</li>
-      </h3>
-      <p>
-        After you have your dataset and network ready, you can train the
-        network. You can do that by clicking the "train a network" button on the{" "}
-        <TabLink tab={`training`} /> tab and selecting your network and dataset.
-        You can change the training parameters on the right and then hit "Start
-        Training".
-      </p>
+        <CenterChild>
+          <CenterImage
+            src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_1.jpg`}
+            alt="creating a network"
+          />
+        </CenterChild>
 
-      <CenterChild>
-        <CenterImage
-          src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_4.jpg`}
-          alt="training a network"
-        />
-      </CenterChild>
+        <h3>
+          <li>Dataset</li>
+        </h3>
+        <p>
+          If you want to use your own dataset, you can upload it on the{" "}
+          <TabLink tab={`datasets`} /> tab. If not, there is a sample of the{" "}
+          <a href="https://www.cs.toronto.edu/~kriz/cifar.html">cifar-10</a>{" "}
+          dataset already provided.
+        </p>
 
-      <h3>
-        <li>Using the network</li>
-      </h3>
-      <p>
-        After you have completed training, you can play around with the network.
-        If you go to the <TabLink tab={`datasets`} /> tab and click on a
-        dataset, you can build a confusion matrix on the dataset.
-      </p>
-      <CenterChild>
-        <CenterImage
-          src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_8.jpg`}
-          alt="confusion matrix"
-        />
-      </CenterChild>
-      <p>
-        You can also click on a network on the <TabLink tab={`networks`} /> tab
-        and classify a single image from a dataset
-      </p>
+        <CenterChild>
+          <CenterImage
+            src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_3.jpg`}
+            alt="uploading a dataset"
+            width="80%"
+          />
+        </CenterChild>
 
-      <CenterChild>
-        <CenterImage
-          src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_7.jpg`}
-          alt="Classifying a dataset image"
-        />
-      </CenterChild>
+        <h3>
+          <li>Training</li>
+        </h3>
+        <p>
+          After you have your dataset and network ready, you can train the
+          network. You can do that by clicking the "train a network" button on
+          the <TabLink tab={`training`} /> tab and selecting your network and
+          dataset. You can change the training parameters on the right and then
+          hit "Start Training".
+        </p>
 
-      <p>or upload your own image to classify.</p>
+        <CenterChild>
+          <CenterImage
+            src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_4.jpg`}
+            alt="training a network"
+          />
+        </CenterChild>
 
-      <CenterChild>
-        <CenterImage
-          src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_6.jpg`}
-          alt="Classifying an uploaded image"
-        />
-      </CenterChild>
-    </ol>
-  </DashboardWrapper>
-);
+        <h3>
+          <li>Using the network</li>
+        </h3>
+        <p>
+          After you have completed training, you can play around with the
+          network. If you go to the <TabLink tab={`datasets`} /> tab and click
+          on a dataset, you can build a confusion matrix on the dataset.
+        </p>
+        <CenterChild>
+          <CenterImage
+            src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_8.jpg`}
+            alt="confusion matrix"
+          />
+        </CenterChild>
+        <p>
+          You can also click on a network on the <TabLink tab={`networks`} />{" "}
+          tab and classify a single image from a dataset
+        </p>
+
+        <CenterChild>
+          <CenterImage
+            src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_7.jpg`}
+            alt="Classifying a dataset image"
+          />
+        </CenterChild>
+
+        <p>or upload your own image to classify.</p>
+
+        <CenterChild>
+          <CenterImage
+            src={process.env.PUBLIC_URL + `/tutorial_images/Screenshot_6.jpg`}
+            alt="Classifying an uploaded image"
+          />
+        </CenterChild>
+      </ol>
+    </DashboardWrapper>
+  );
+});

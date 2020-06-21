@@ -41,6 +41,7 @@ const SelectableBigNetworkList = ({
   networks,
   onSelect,
   refreshFunction,
+  lastId,
 }) => {
   const [selected, select] = React.useState(false);
   const [serversWithError, setServersWithError] = React.useState({});
@@ -85,6 +86,11 @@ const SelectableBigNetworkList = ({
                       select(networks.networks[server.uniqueName][networkId]);
                       onSelect(server, networkId);
                     }}
+                    id={
+                      Object.keys(networks.networks[server.uniqueName]).length -
+                        1 ===
+                        j && lastId
+                    }
                   />
                 )
               )}
